@@ -1,10 +1,21 @@
 import sys
 
+
 def scan(input):
-	output = open(input).read()
+
+	cur_row = 1
+	cur_col = 1
+
+	output = open(input, 'r').read().splitlines()
+	for line in output:
+		print "current row scanned:" +str(cur_row)+ ":" +line
+		cur_row+=1
+		cur_col =1
+		for a in line:
+			print "currrent column scanned:"+str(cur_col)+":" +a
+			cur_col+=1
+		
 	
-	for a in output:
-		print a
 
 
 if __name__ == '__main__':
@@ -15,3 +26,5 @@ if __name__ == '__main__':
 	filename = sys.argv[1]
 	#Read file
 	scan(filename)
+
+
