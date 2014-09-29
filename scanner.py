@@ -2,8 +2,9 @@ import sys
 
 
 def scan(input):
-
+	#keep track of current row
 	cur_row = 1
+	#keep track of current column
 	cur_col = 1
 
 	output = open(input, 'r').read().splitlines()
