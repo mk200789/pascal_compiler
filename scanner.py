@@ -2,6 +2,10 @@ import sys
 
 
 def scan(input):
+
+	#TOKEN
+	keyword={}
+		
 	#keep track of current row
 	cur_row = 1
 	#keep track of current column
@@ -15,6 +19,7 @@ def scan(input):
 		for a in line:
 			print "currrent column scanned:"+str(cur_col)+":" +a
 			cur_col+=1
+
 		
 	
 
