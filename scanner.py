@@ -4,8 +4,11 @@ import sys
 def scan(input):
 
 	#TOKEN
-	keyword={}
-		
+	keyword={
+		'STRING'  : 'TK_STRING',
+		'PROGRAM' : 'TK_PROGRAM'
+	}
+
 	#keep track of current row
 	cur_row = 1
 	#keep track of current column
@@ -18,6 +21,8 @@ def scan(input):
 		cur_col =1
 		for a in line:
 			print "currrent column scanned:"+str(cur_col)+":" +a
+			if keyword[a]:
+				print a
 			cur_col+=1
 
 		
