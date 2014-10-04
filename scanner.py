@@ -1,5 +1,28 @@
 import sys
 
+class Scanner(object):
+	def __init__(self, cur_row, cur_col, string_mode):
+		self.cur_row = cur_row
+		self.cur_col = cur_col
+		self.string_mode = string_mode
+
+	def scan(self, input):
+		output = open(input, 'r').read().splitlines()
+		for line in output:
+			self.cur_row +=1
+			self.cur_col +=1
+			for a in line:
+				self.cur_col +=1
+
+	#learning purpose
+	def show(self):
+		print self.cur_row
+
+
+
+
+#######################################################
+
 def scan(input):
 	string_c= 0
 	string_rec = ''
@@ -51,4 +74,5 @@ if __name__ == '__main__':
 	#Read file
 	scan(filename)
 
-
+	a = Scanner(1,1,False)
+	a.show()
