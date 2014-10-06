@@ -1,7 +1,7 @@
 import sys
 
 class Scanner(object):
-    def __init__(self, cur_row, cur_col, string_mode, string_rec, count, cur_state, numeric_mode, real_mode):
+    def __init__(self, cur_row, cur_col, string_mode, string_rec, count, cur_state, numeric_mode, real_mode, tokens):
         #keep track of current row
         self.cur_row = cur_row
         #keep track of current column
@@ -14,14 +14,18 @@ class Scanner(object):
         self.cur_state = cur_state
         self.numeric_mode = numeric_mode
         self.real_mode = real_mode
+        #returns a list of tokens
+        self.tokens = tokens
 
     def scan(self, input):
         output = open(input, 'r').read().splitlines()
         for line in output:
+            #print "current row scanned:" +str(self.cur_row)+ ":" +line
             self.cur_row +=1
             self.cur_col =1
             for a in line:
             #if a double quotation is seen
+                #print "currrent column scanned:"+str(self.cur_col)+":" +a
                 if self.string_mode:
                     if ord(a) == 34:
                         self.count += 1
@@ -32,12 +36,14 @@ class Scanner(object):
                 else:
                     self.build_state(a)
                     self.cur_col += 1
+        print self.tokens
 
 
     def build_string(self, a):
         if self.count == 2:
             self.string_rec += a
-            print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a string."
+            print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a string. "
+            self.tokens.append(('TK_STRING', self.string_rec, self.cur_row-1, self.cur_col - 1))
             self.string_rec = ''
             self.count = 0
             self.string_mode = False
@@ -50,31 +56,28 @@ class Scanner(object):
         #Handles number, or real numbers.
         if a.isdigit():
             self.string_rec += a
-        
-        if not(a.isdigit()) and ord(a)!= 59:
+
+        #if character is a space or symbol, build a new token
+        if ord(a) > 57 or ord(a) <= 32:
             self.numeric_mode = False
             if self.real_mode:
-                #print self.string_rec
-                self.string_rec += a
+                print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a real number."
+                self.tokens.append(('TK_REAL', self.string_rec, self.cur_row-1, self.cur_col - 1))
+                self.real_mode = False
+                self.string_rec = ''
                 return
-           
+            else:
+                print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a number."
+                self.tokens.append(( 'TK_INTEGER', self.string_rec, self.cur_row-1, self.cur_col - 1 ))
+                self.string_rec = ''
+                return
 
         if ord(a) == 46:
-            # a real number
+            #a real number if a dot is scene
             self.real_mode = True
             self.string_rec += a
             return
 
-
-        if ord(a) == 59:
-            if self.real_mode:
-                print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a real number."
-                self.real_mode = False
-            elif self.numeric_mode:
-                print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a number."
-                self.numeric_mode = False
-            self.string_rec = ''
-            return            
 
     def build_state(self, a):
         #state machine to keep track of current state
@@ -111,7 +114,7 @@ if __name__ == '__main__':
 	#Open file
 	filename = sys.argv[1]
 
-	a = Scanner(1,1,False,'', 0, '', False, False)
+	a = Scanner(1,1,False,'', 0, '', False, False,[])
 	a.scan(filename)
     
 
