@@ -27,20 +27,17 @@ class Scanner(object):
             #if a double quotation is seen
                 #print "currrent column scanned:"+str(self.cur_col)+":" +a
                 if self.string_mode:
-                    if ord(a) == 34:
-                        self.count += 1
                     self.build_string(a)
-                    self.cur_col += 1
                 elif self.numeric_mode:
                     self.build_number(a)
                 else:
                     self.build_state(a)
-                    self.cur_col += 1
+                self.cur_col += 1
         print self.tokens
 
 
     def build_string(self, a):
-        if self.count == 2:
+        if ord(a) == 39:
             self.string_rec += a
             print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a string. "
             self.tokens.append(('TK_STRING', self.string_rec, self.cur_row-1, self.cur_col - 1))
@@ -81,8 +78,8 @@ class Scanner(object):
 
     def build_state(self, a):
         #state machine to keep track of current state
-        #string state
-        if ord(a) == 34:
+        #string state, single quotation
+        if ord(a) == 39:
             self.string_mode = True
             self.string_rec += a
             self.count +=1
