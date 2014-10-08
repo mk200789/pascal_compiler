@@ -35,7 +35,6 @@ class Scanner(object):
                 self.cur_col += 1
         print self.tokens
 
-
     def build_string(self, a):
         if ord(a) == 39:
             self.string_rec += a
@@ -75,9 +74,8 @@ class Scanner(object):
             self.string_rec += a
             return
 
-
     def build_state(self, a):
-        #state machine to keep track of current state
+        #state machine to keep track of current state  
         #string state, single quotation
         if ord(a) == 39:
             self.string_mode = True
@@ -85,23 +83,37 @@ class Scanner(object):
             self.count +=1
             return
         #numeric state
-        elif a.isdigit():
+        if a.isdigit():
             self.numeric_mode = True
             self.string_rec += a
             return
+        #semicolon state
+        if ord(a) == 59 and not self.numeric_mode:
+            self.tokens.append(('TK_SEMICOLON', ';', self.cur_row-1, self.cur_col-1))
 
+    def to_upper(self, a):
+        #returns lowercase strings
+        return a.upper()
+
+    def to_lower(self, a):
+        return a.lower()
 
 	#learning purpose
 	def show(self):
         #print self.tokens
 		print self.cur_row
-    
+
+##write funcion take in table name and keyname and return value
+
     keyword={
         'STRING'    : 'TK_STRING',
         'REAL'      : 'TK_REAL',
         'INTEGER'   : 'TK_INTEGER',
-        'PROGRAM'   : 'TK_PROGRAM'
-    }        
+        'PROGRAM'   : 'TK_PROGRAM',
+        'SEMICOLON' : 'TK_SEMICOLON',
+        'IDENTIFIER': 'TK_IDENTIFIER'
+    }          
+          
 
 
 if __name__ == '__main__':
