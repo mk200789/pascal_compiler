@@ -75,9 +75,19 @@ class Scanner(object):
             return
 
     def build_state(self, a):
-        #state machine to keep track of current state  
+        #state machine to keep track of current state
+        #space state
+        if ord(a) <= 32:
+            if self.to_upper(self.string_rec) in self.keyword:
+                #print self.keyword[self.to_upper(self.string_rec)]
+                self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col - 1))  
+            self.string_rec = ''
+            return
+
         #string state, single quotation
         if ord(a) == 39:
+            self.string_rec =''
+            #print str(a) + " string"
             self.string_mode = True
             self.string_rec += a
             self.count +=1
@@ -90,13 +100,15 @@ class Scanner(object):
         #semicolon state
         if ord(a) == 59 and not self.numeric_mode:
             self.tokens.append(('TK_SEMICOLON', ';', self.cur_row-1, self.cur_col-1))
+            self.string_rec =''
+            return
+
+        self.string_rec += a
+
 
     def to_upper(self, a):
         #returns lowercase strings
         return a.upper()
-
-    def to_lower(self, a):
-        return a.lower()
 
 	#learning purpose
 	def show(self):
@@ -111,7 +123,8 @@ class Scanner(object):
         'INTEGER'   : 'TK_INTEGER',
         'PROGRAM'   : 'TK_PROGRAM',
         'SEMICOLON' : 'TK_SEMICOLON',
-        'IDENTIFIER': 'TK_IDENTIFIER'
+        'IDENTIFIER': 'TK_IDENTIFIER',
+        'BEGIN'     : 'TK_BEGIN'
     }          
           
 
