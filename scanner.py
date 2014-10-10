@@ -38,7 +38,7 @@ class Scanner(object):
                     self.build_state(a)
                 self.cur_col += 1
         print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))                
-        #print self.tokens
+        print self.tokens
 
     def build_string(self, a):
         if ord(a) == 39:
@@ -72,7 +72,7 @@ class Scanner(object):
             else:
                 #print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a number."
                 self.tokens.append(( 'TK_INTEGER', self.string_rec, self.cur_row-1, self.cur_col))
-                self.table.append({'TOKEN' : 'TK_INTEGER', 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})                
+                self.table.append({'TOKEN' : 'TK_INTEGER', 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
                 self.string_rec = ''
                 return
 
@@ -93,15 +93,6 @@ class Scanner(object):
                 self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
             self.string_rec = ''
             return
-        elif ord(a) >=65:
-            if self.cur_token:
-                if self.cur_token in self.keyword:
-                    self.tokens.append((self.keyword[self.cur_token], self.cur_token, self.cur_row-1, self.cur_col))
-                    self.table.append({'TOKEN' : self.keyword[self.cur_token], 'VALUE' : self.cur_token, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
-                    self.cur_token = ''
-
-
-
 
         #string state, single quotation
         if ord(a) == 39:
@@ -130,15 +121,46 @@ class Scanner(object):
         #equal
         if ord(a) == 61:
             self.string_rec +=a
+            if ord(self.cur_token) == 58:
+                print "hes"
             # := state
             if self.string_rec in self.keyword:
                 self.tokens.append((self.keyword[self.string_rec], self.string_rec, self.cur_row-1, self.cur_col))
                 self.table.append({'TOKEN' : self.keyword[self.string_rec], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
                 self.string_rec = ''
+                self.cur_token =''
+                return
+        #plus
+        if ord(a) == 43:
+            self.tokens.append((self.keyword[a], a, self.cur_row-1, self.cur_col))
+            self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+            self.string_rec = ''
+            return
+        #minus
+        if ord(a) == 45:
+            self.tokens.append((self.keyword[a], a, self.cur_row-1, self.cur_col))
+            self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+            self.string_rec = ''
+            return
+        #dot
+        if ord(a) == 46:
+            if self.to_upper(self.string_rec) in self.keyword:
+                self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
+                self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+                self.string_rec = ''
                 return
 
         self.string_rec += a
 
+        ##identifier
+        if ord(a) >=65:
+            #print self.string_rec
+            if self.to_upper(self.string_rec) in self.keyword:
+                #print self.keyword[self.to_upper(self.string_rec)]
+                self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
+                self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+                self.string_rec = ''
+            return
 
     def to_upper(self, a):
         #returns lowercase strings
@@ -151,17 +173,18 @@ class Scanner(object):
 
     #for debugging purpose
     def print_table(self, i, names, row, data):
-        table = PrettyTable()
-        table.names = names
+        table = PrettyTable(names)
+        #print names
         for datum in data:
             row.append(i)
             for k, v in datum.items():
+                #print str(k) + "boob"
                 if str(k) == 'TOKEN':
                     row.append(v)
+                if str(k) == 'VALUE':                    
+                    row.append(v)
                 if str(k) == 'ROW':
-                    row.append(v)
-                if str(k) == 'VALUE':
-                    row.append(v)
+                    row.append(v)                    
                 if str(k) == 'COL':
                     row.append(v)
             table.add_row(row)
