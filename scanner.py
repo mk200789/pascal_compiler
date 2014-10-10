@@ -1,7 +1,7 @@
 import sys
 
 class Scanner(object):
-    def __init__(self, cur_row, cur_col, string_mode, string_rec, count, cur_state, numeric_mode, real_mode, tokens):
+    def __init__(self, cur_row, cur_col, string_mode, string_rec, count, cur_state, numeric_mode, real_mode, tokens, cur_token):
         #keep track of current row
         self.cur_row = cur_row
         #keep track of current column
@@ -16,6 +16,8 @@ class Scanner(object):
         self.real_mode = real_mode
         #returns a list of tokens
         self.tokens = tokens
+        #set state of current token in build_state(a)
+        self.cur_token = cur_token
 
     def scan(self, input):
         output = open(input, 'r').read().splitlines()
@@ -38,8 +40,8 @@ class Scanner(object):
     def build_string(self, a):
         if ord(a) == 39:
             self.string_rec += a
-            print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a string. "
-            self.tokens.append(('TK_STRING', self.string_rec, self.cur_row-1, self.cur_col - 1))
+            #print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a string. "
+            self.tokens.append(('TK_STRING', self.string_rec, self.cur_row-1, self.cur_col))
             self.string_rec = ''
             self.count = 0
             self.string_mode = False
@@ -57,14 +59,14 @@ class Scanner(object):
         if ord(a) > 57 or ord(a) <= 32:
             self.numeric_mode = False
             if self.real_mode:
-                print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a real number."
-                self.tokens.append(('TK_REAL', self.string_rec, self.cur_row-1, self.cur_col - 1))
+                #print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a real number."
+                self.tokens.append(('TK_REAL', self.string_rec, self.cur_row-1, self.cur_col))
                 self.real_mode = False
                 self.string_rec = ''
                 return
             else:
                 print "Row " + str(self.cur_row-1) +" : "+ str(self.string_rec) + " is a number."
-                self.tokens.append(( 'TK_INTEGER', self.string_rec, self.cur_row-1, self.cur_col - 1 ))
+                self.tokens.append(( 'TK_INTEGER', self.string_rec, self.cur_row-1, self.cur_col))
                 self.string_rec = ''
                 return
 
@@ -77,17 +79,25 @@ class Scanner(object):
     def build_state(self, a):
         #state machine to keep track of current state
         #space state
+        print self.string_rec
         if ord(a) <= 32:
             if self.to_upper(self.string_rec) in self.keyword:
                 #print self.keyword[self.to_upper(self.string_rec)]
-                self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col - 1))  
+                self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))  
             self.string_rec = ''
             return
+        elif ord(a) >=65:
+            if self.cur_token:
+                if self.cur_token in self.keyword:
+                    self.tokens.append((self.keyword[self.cur_token], self.cur_token, self.cur_row-1, self.cur_col))  
+                    self.cur_token = ''
+
+
+
 
         #string state, single quotation
         if ord(a) == 39:
             self.string_rec =''
-            #print str(a) + " string"
             self.string_mode = True
             self.string_rec += a
             self.count +=1
@@ -99,9 +109,23 @@ class Scanner(object):
             return
         #semicolon state
         if ord(a) == 59 and not self.numeric_mode:
-            self.tokens.append(('TK_SEMICOLON', ';', self.cur_row-1, self.cur_col-1))
+            self.tokens.append((self.keyword[a],a, self.cur_row-1, self.cur_col))
             self.string_rec =''
             return
+        #colon
+        if ord(a) == 58:
+            self.string_rec += a
+            #set current token as COLON
+            self.cur_token = a
+            return
+        #equal
+        if ord(a) == 61:
+            self.string_rec +=a
+            # := state
+            if self.string_rec in self.keyword:
+                self.tokens.append((self.keyword[self.string_rec], self.string_rec, self.cur_row-1, self.cur_col))
+                self.string_rec = ''
+                return
 
         self.string_rec += a
 
@@ -110,33 +134,39 @@ class Scanner(object):
         #returns lowercase strings
         return a.upper()
 
-	#learning purpose
-	def show(self):
+    #learning purpose
+    def show(self):
         #print self.tokens
-		print self.cur_row
+        print self.cur_row
 
 ##write funcion take in table name and keyname and return value
 
     keyword={
-        'STRING'    : 'TK_STRING',
+        'STRING'    : 'TK_ID_STRING',
         'REAL'      : 'TK_REAL',
-        'INTEGER'   : 'TK_INTEGER',
+        'INTEGER'   : 'TK_ID_INTEGER',
         'PROGRAM'   : 'TK_PROGRAM',
-        'SEMICOLON' : 'TK_SEMICOLON',
         'IDENTIFIER': 'TK_IDENTIFIER',
-        'BEGIN'     : 'TK_BEGIN'
+        'BEGIN'     : 'TK_BEGIN',
+        'END'       : 'TK_END',
+        ';'         : 'TK_SEMICOLON',            
+        ':'         : 'TK_COLON',
+        '='         : 'TK_EQUAL',
+        ':='        : 'TK_ASSIGNMENT',
+        '+'         : 'TK_ADD',
+        '-'         : 'TK_MINUS',
     }          
           
 
 
 if __name__ == '__main__':
-	if len(sys.argv)!= 2:
-		exit(1)
+    if len(sys.argv)!= 2:
+        exit(1)
 
-	#Open file
-	filename = sys.argv[1]
+    #Open file
+    filename = sys.argv[1]
 
-	a = Scanner(1,1,False,'', 0, '', False, False,[])
-	a.scan(filename)
+    a = Scanner(1,1,False,'', 0, '', False, False,[],'')
+    a.scan(filename)
     
 
