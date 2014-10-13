@@ -180,16 +180,31 @@ class Scanner(object):
         #open parenthesis
         if ord(a) == 40:
             if self.string_rec:
+                #if strings read before open parenthesis, check string if in keyword, if so append to token list
                 if self.to_upper(self.string_rec) in self.keyword:
+                    print self.keyword[self.to_upper(self.string_rec)]
                     self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
                     self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
-                    self.string_rec = ''
-            else:
+            self.tokens.append((self.keyword[a], a, self.cur_row-1, self.cur_col))
+            print str(a) + " : " + str(self.keyword[self.to_upper(a)])
+            self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+            self.string_rec = ''
+            return
+
+        #closing parenthesis
+        if ord(a) == 41:
+            if self.string_rec:
+                #if strings read before open parenthesis, check string if in keyword, if so append to token list
                 if self.to_upper(self.string_rec) in self.keyword:
+                    print self.keyword[self.to_upper(self.string_rec)]
                     self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
                     self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
-                    self.string_rec = a
-                return               
+            self.tokens.append((self.keyword[a], a, self.cur_row-1, self.cur_col))
+            print str(a) + " : " + str(self.keyword[self.to_upper(a)])
+            self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+            self.string_rec = ''
+            return            
+
         self.string_rec += a
 
 
