@@ -177,6 +177,19 @@ class Scanner(object):
                 self.string_rec = ''
                 return
 
+        #open parenthesis
+        if ord(a) == 40:
+            if self.string_rec:
+                if self.to_upper(self.string_rec) in self.keyword:
+                    self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
+                    self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+                    self.string_rec = ''
+            else:
+                if self.to_upper(self.string_rec) in self.keyword:
+                    self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
+                    self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
+                    self.string_rec = a
+                return               
         self.string_rec += a
 
 
@@ -228,6 +241,9 @@ class Scanner(object):
         ':='        : 'TK_ASSIGNMENT',
         '+'         : 'TK_ADD',
         '-'         : 'TK_MINUS',
+        '('         : 'TK_OPEN_PARENTHESIS',
+        ')'         : 'TK_CLOSE_PARENTHESIS',
+        'WRITELN'   : 'TK_WRITELN'
     }          
           
 
