@@ -24,18 +24,18 @@ class Scanner(object):
     def scan(self, input):
         output = open(input, 'r').read().splitlines()
         for line in output:
-            #print "current row scanned:" +str(self.cur_row)+ ":" +line
+            print "current row scanned:" +str(self.cur_row)+ ":" +line
             self.cur_row +=1
             self.cur_col =1
             for a in line:
             #if a double quotation is seen
-                #print "currrent column scanned:"+str(self.cur_col)+":" +a
+                print "currrent column scanned:"+str(self.cur_col)+":" + a
                 if self.string_mode:
                     self.build_string(a)
                 elif self.numeric_mode:
-                    self.build_number(a)
+                    self.build_number(a)                 
                 else:
-                    self.build_state(a)
+                    self.build_state(a)                 
                 self.cur_col += 1
         print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))                
         print self.tokens
@@ -83,10 +83,10 @@ class Scanner(object):
     def build_state(self, a):
         #state machine to keep track of current state
         #space state
-        print str(self.string_rec) #+ " : " +a + "HEKK"
+        #print str(self.string_rec) + " : " +a + "HEKK"
         if ord(a) <= 32:
             if self.to_upper(self.string_rec) in self.keyword:
-                print str(self.keyword[self.to_upper(self.string_rec)])
+                #print str(self.keyword[self.to_upper(self.string_rec)])
                 self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
                 self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
 
@@ -123,10 +123,10 @@ class Scanner(object):
         if ord(a) == 59 and not self.numeric_mode:
             if self.string_rec:
                     if self.to_upper(self.string_rec) in self.keyword:
-                        print self.keyword[self.to_upper(self.string_rec)]
+                        #print self.keyword[self.to_upper(self.string_rec)]
                         self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col-1))
                         self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col-1})                     
-            print str(self.string_rec) + " SEMICOLON"
+            #print str(self.string_rec) + " SEMICOLON" +str(self.cur_row)
             self.tokens.append((self.keyword[a],a, self.cur_row-1, self.cur_col))
             self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
             self.string_rec = ''
@@ -203,7 +203,7 @@ class Scanner(object):
 
         if self.string_rec and not self.cur_token:
             if self.to_upper(self.string_rec) in self.keyword:
-                print str(self.keyword[self.to_upper(self.string_rec)])
+                #print str(self.keyword[self.to_upper(self.string_rec)])
                 self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row-1, self.cur_col))
                 self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row-1, 'COL' : self.cur_col})
                 self.string_rec = a
@@ -217,10 +217,6 @@ class Scanner(object):
         #returns lowercase strings
         return a.upper()
 
-    #learning purpose
-    def show(self):
-        #print self.tokens
-        print self.cur_row
 
     #for debugging purpose
     def print_table(self, i, names, row, data):
