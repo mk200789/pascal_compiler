@@ -24,28 +24,26 @@ class Scanner(object):
     def scan(self, input):
         output = open(input, 'r').readlines()
         for line in output:
-            #print "current row scanned:" +str(self.cur_row)+ ":" +line
+            print "current row scanned:" +str(self.cur_row)#+ ":" +line
             for a in line:
             #if a double quotation is seen
-                #print "currrent column scanned:"+str(self.cur_col-1)+":" + a
-                if ord(a) == 10:
-                    print ord(a)
+                print "currrent column scanned:"+str(self.cur_col)+" : " + a
                 if self.string_mode:
                     self.build_string(a)
                     if ord(a) == 10:
-                        print str(ord(a))+" : "+str(a)
+                        #print str(ord(a))+" : "+str(a)
                         self.cur_col = 1
                         self.cur_row += 1
                 elif self.numeric_mode:
                     self.build_number(a)                 
                     if ord(a) == 10:
-                        print str(ord(a))+" : "+str(a)
+                        #print str(ord(a))+" : "+str(a)
                         self.cur_col = 1
                         self.cur_row += 1
                 else:
                     self.build_state(a)
                     if ord(a) == 10:
-                        print str(ord(a))+" : "+str(a)
+                        #print str(ord(a))+" : "+str(a)
                         self.cur_col = 1
                         self.cur_row += 1               
                 self.cur_col += 1
@@ -76,13 +74,13 @@ class Scanner(object):
             self.numeric_mode = False
             if self.real_mode:
                 #print "Row " + str(self.cur_row) +" : "+ str(self.string_rec) + " is a real number."
-                self.tokens.append(('TK_REAL', self.string_rec, self.cur_row, self.cur_col-1))
-                self.table.append({'TOKEN' : 'TK_REAL', 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
+                self.tokens.append(('TK_REAL', self.string_rec, self.cur_row, self.cur_col-2))
+                self.table.append({'TOKEN' : 'TK_REAL', 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-2})
                 self.real_mode = False
             else:
-                #print "Row " + str(self.cur_row) +" : "+ str(self.string_rec) + " is a number."
-                self.tokens.append(( 'TK_INTEGER', self.string_rec, self.cur_row, self.cur_col-1))
-                self.table.append({'TOKEN' : 'TK_INTEGER', 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
+                print "Row " + str(self.cur_row) +" : "+ str(self.string_rec) + " is a number."
+                self.tokens.append(( 'TK_INTEGER', self.string_rec, self.cur_row, self.cur_col-2))
+                self.table.append({'TOKEN' : 'TK_INTEGER', 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-2})
             self.string_rec = a
             return
 
@@ -95,27 +93,19 @@ class Scanner(object):
     def build_state(self, a):
         #state machine to keep track of current state
         #space state
-        #print str(self.string_rec) + " : " +a + "HEKK"
+        print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE"
         if ord(a) <= 32:
-            if self.to_upper(self.string_rec) in self.keyword:
-                #print str(self.keyword[self.to_upper(self.string_rec)])
+            if self.cur_token:
+                self.tokens.append((self.keyword[self.cur_token], self.cur_token, self.cur_row, self.cur_col-2))
+                self.table.append({'TOKEN' : self.keyword[self.cur_token], 'VALUE' : self.cur_token, 'ROW' : self.cur_row, 'COL' : self.cur_col-2})
+                self.cur_token =''
+
+            elif self.to_upper(self.string_rec) in self.keyword:
+                print "INSIDE OF SPACE STATE"
                 self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
-                self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
-
-                if self.to_upper(self.string_rec) == 'VAR':
-                    self.cur_token = 'IDENTIFIER'
-                else:
-                    self.string_rec = ''
-                    self.cur_token =''
-                    return
-            elif self.to_upper(self.string_rec) not in self.keyword:
-                if self.cur_token:
-                    self.tokens.append((self.keyword[self.cur_token], self.string_rec, self.cur_row, self.cur_col-1))
-                    self.table.append({'TOKEN' : self.keyword[self.cur_token], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
-                    self.cur_token = ''              
+                self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})           
             self.string_rec = ''
-            return
-
+            return          
 
         #string state, single quotation
         if ord(a) == 39:
@@ -133,12 +123,7 @@ class Scanner(object):
 
         #semicolon state
         if ord(a) == 59 and not self.numeric_mode:
-            if self.string_rec:
-                    if self.to_upper(self.string_rec) in self.keyword:
-                        #print self.keyword[self.to_upper(self.string_rec)]
-                        self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
-                        self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})                     
-            #print str(self.string_rec) + " SEMICOLON" +str(self.cur_row)
+            print "INSIDE OF SEMICOLON"
             self.tokens.append((self.keyword[a],a, self.cur_row, self.cur_col-1))
             self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
             self.string_rec = ''
@@ -148,20 +133,19 @@ class Scanner(object):
         if ord(a) == 58:
             #set current token as COLON
             self.string_rec = a
-            #print str(self.string_rec)+"zoomba"
             self.cur_token = a
+            print "INSIDE OF COLON"
             return
 
         #equal
         if ord(a) == 61:
             self.string_rec +=a
-            #print str(self.string_rec) + "dfdkfjkd"
             if not self.cur_token:
                 self.tokens.append((self.keyword[self.string_rec], self.string_rec, self.cur_row, self.cur_col-1))
                 self.table.append({'TOKEN' : self.keyword[self.string_rec], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
                 self.string_rec = ''
                 return                
-            if ord(self.cur_token) == 58:
+            if self.cur_token: #== 58:
             # := state
                 if self.string_rec in self.keyword:
                     self.tokens.append((self.keyword[self.string_rec], self.string_rec, self.cur_row, self.cur_col-1))
@@ -170,15 +154,8 @@ class Scanner(object):
                     self.cur_token =''
                     return        
 
-        #plus
-        if ord(a) == 43:
-            self.tokens.append((self.keyword[a], a, self.cur_row, self.cur_col-1))
-            self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
-            self.string_rec = ''
-            return
-
-        #minus
-        if ord(a) == 45:
+        #plus / minus state
+        if ord(a) == 43 or ord(a) == 45:
             self.tokens.append((self.keyword[a], a, self.cur_row, self.cur_col-1))
             self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
             self.string_rec = ''
@@ -212,16 +189,30 @@ class Scanner(object):
             #print "close"
             return
 
+        #less state / greater state
+        if ord(a) == 60 or ord(a) == 62:
+            self.string_rec = a
+            self.cur_token = a
+            print self.cur_token
+            return
 
+        self.string_rec += a
+        print str(self.string_rec) +"END " +self.cur_token
         if self.string_rec and not self.cur_token:
+            print "HELLO" +str(self.to_upper(self.string_rec))
             if self.to_upper(self.string_rec) in self.keyword:
+                print "INSIDE OF IDENTIFIER"
                 #print str(self.keyword[self.to_upper(self.string_rec)])
                 self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
                 self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
-                self.string_rec = a
-                return
+            else:
+                if a in self.keyword:
+                    print "else"
+                    self.tokens.append((self.keyword[a], a, self.cur_row, self.cur_col-1))
+                    self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})                    
+            self.string_rec = ''
+            return
 
-        self.string_rec += a
 
 
 
@@ -237,7 +228,6 @@ class Scanner(object):
         for datum in data:
             row.append(i)
             for k, v in datum.items():
-                #print str(k) + "boob"
                 if str(k) == 'TOKEN':
                     row.append(v)
                 if str(k) == 'VALUE':                    
@@ -266,6 +256,10 @@ class Scanner(object):
         ';'         : 'TK_SEMICOLON',            
         ':'         : 'TK_COLON',
         '='         : 'TK_EQUAL',
+        '<'         : 'TK_LESS',
+        '>'         : 'TK_GREATER',
+        '<='        : 'TK_LESS_EQUAL',
+        '>='        : 'TK_GREATER_EQUAL',
         ':='        : 'TK_ASSIGNMENT',
         '+'         : 'TK_ADD',
         '-'         : 'TK_MINUS',
@@ -283,7 +277,7 @@ if __name__ == '__main__':
     #Open file
     filename = sys.argv[1]
 
-    a = Scanner(1,1,False,'', 0, '', False, False,[],'',[])
+    a = Scanner(1,2,False,'', 0, '', False, False,[],'',[])
     a.scan(filename)
     
 
