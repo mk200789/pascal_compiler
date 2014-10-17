@@ -139,6 +139,10 @@ class Scanner(object):
 
         #colon
         if ord(a) == 58:
+            if self.string_rec:
+                # if there's a string before the colon, it's an identifier
+                self.tokens.append((self.keyword['IDENTIFIER'], self.string_rec, self.cur_row, self.cur_col-2))
+                self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-2})          
             #set current token as COLON
             self.string_rec = a
             self.cur_token = a
@@ -262,6 +266,7 @@ class Scanner(object):
         'STRING'    : 'TK_ID_STRING',
         'REAL'      : 'TK_REAL',
         'INTEGER'   : 'TK_ID_INTEGER',
+        'BOOLEAN'   : 'TK_BOOLEAN',
         'FLOAT'     : 'TK_FLOAT',
         'CHAR'      : 'TK_CHAR',
         'PROGRAM'   : 'TK_PROGRAM',
