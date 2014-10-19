@@ -2,7 +2,7 @@ import sys
 from prettytable import PrettyTable
 
 class Scanner(object):
-    def __init__(self, cur_row, cur_col, string_mode, string_rec, count, cur_state, numeric_mode, real_mode, tokens, cur_token, table):
+    def __init__(self, cur_row, cur_col, string_mode, string_rec, numeric_mode, real_mode, tokens, cur_token, table):
         #keep track of current row
         self.cur_row = cur_row
         #keep track of current column
@@ -10,9 +10,6 @@ class Scanner(object):
         #check if in string mode
         self.string_mode = string_mode
         self.string_rec = string_rec
-        #keep track of quotation
-        self.count = count
-        self.cur_state = cur_state
         self.numeric_mode = numeric_mode
         self.real_mode = real_mode
         #returns a list of tokens
@@ -27,7 +24,7 @@ class Scanner(object):
             #print "current row scanned:" +str(self.cur_row)#+ ":" +line
             for a in line:
             #if a double quotation is seen
-                print "currrent column scanned:"+str(self.cur_col)+" : " + a
+                #print "currrent column scanned:"+str(self.cur_col)+" : " + a
                 if self.string_mode:
                     self.build_string(a)
                     if ord(a) == 10:
@@ -48,7 +45,7 @@ class Scanner(object):
                         self.cur_row += 1               
                 self.cur_col += 1
         print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))                
-        print self.tokens
+        #print self.tokens
 
     def build_string(self, a):
         if ord(a) == 39:
@@ -57,7 +54,6 @@ class Scanner(object):
             self.tokens.append(('TK_STRING', self.string_rec, self.cur_row, self.cur_col-1))
             self.table.append({'TOKEN' : 'TK_STRING', 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
             self.string_rec = ''
-            self.count = 0
             self.string_mode = False
             return
         else:
@@ -116,7 +112,6 @@ class Scanner(object):
             self.string_rec =''
             self.string_mode = True
             self.string_rec += a
-            self.count +=1
             return
 
         #numeric state
@@ -173,14 +168,6 @@ class Scanner(object):
             self.string_rec = ''
             return
 
-        #dot
-        if ord(a) == 46:
-            if self.to_upper(self.string_rec) in self.keyword:
-                self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
-                self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
-                self.string_rec = ''
-                return
-
         #open parenthesis
         if ord(a) == 40:
             self.tokens.append((self.keyword[a],a, self.cur_row, self.cur_col-1))
@@ -196,7 +183,7 @@ class Scanner(object):
             if self.string_rec:
                 self.tokens.append((self.keyword['IDENTIFIER'], self.string_rec, self.cur_row, self.cur_col-2))
                 self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-2})
-                self.string_rec =''
+                #self.string_rec =''
 
         #close paranthesis
         if ord(a) == 41:
@@ -211,7 +198,7 @@ class Scanner(object):
         if ord(a) == 60 or ord(a) == 62:
             self.string_rec = a
             self.cur_token = a
-            print self.cur_token
+            #print self.cur_token
             return
 
         self.string_rec += a
@@ -230,9 +217,8 @@ class Scanner(object):
                     self.tokens.append((self.keyword[a], a, self.cur_row, self.cur_col-1))
                     self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})                    
                     self.string_rec = ''
+            #self.cur_token = 'IDENTIFIER'
             return
-
-
 
 
     def to_upper(self, a):
@@ -275,6 +261,7 @@ class Scanner(object):
         'IDENTIFIER': 'TK_IDENTIFIER',
         'BEGIN'     : 'TK_BEGIN',
         'END'       : 'TK_END',
+        'END.'      : 'TK_END_DOT',
         ','         : 'TK_COMMA',
         'IF'        : 'TK_IF',
         'THEN'      : 'TK_THEN',
@@ -301,7 +288,8 @@ class Scanner(object):
         'NOT'       : 'TK_NOT',
         '('         : 'TK_OPEN_PARENTHESIS',
         ')'         : 'TK_CLOSE_PARENTHESIS',
-        'WRITELN'   : 'TK_WRITELN'
+        'WRITELN'   : 'TK_WRITELN',
+        'READLN'    : 'TK_READLN'
     }          
           
 
@@ -313,7 +301,7 @@ if __name__ == '__main__':
     #Open file
     filename = sys.argv[1]
 
-    a = Scanner(1,2,False,'', 0, '', False, False,[],'',[])
+    a = Scanner(1,2,False,'', False, False,[],'',[])
     a.scan(filename)
     
 
