@@ -188,6 +188,10 @@ class Scanner(object):
         #close paranthesis
         if ord(a) == 41:
             if self.cur_token:
+                if self.string_rec:
+                    #if there's string in record prior the closing paranthesis, then this string is an identifier
+                    self.tokens.append((self.keyword['IDENTIFIER'], self.string_rec, self.cur_row, self.cur_col-2))
+                    self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-2})
                 self.tokens.append((self.keyword[a], a, self.cur_row, self.cur_col-1))
                 self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
             self.string_rec=''
@@ -260,8 +264,8 @@ class Scanner(object):
         'VAR'       : 'TK_VAR',
         'IDENTIFIER': 'TK_IDENTIFIER',
         'BEGIN'     : 'TK_BEGIN',
-        'END'       : 'TK_END',
         'END.'      : 'TK_END_DOT',
+        'END;'      : 'TK_END_SEMI',
         ','         : 'TK_COMMA',
         'IF'        : 'TK_IF',
         'THEN'      : 'TK_THEN',
