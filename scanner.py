@@ -2,7 +2,7 @@ import sys
 from prettytable import PrettyTable
 
 class Scanner(object):
-    def __init__(self, cur_row, cur_col, string_mode, string_rec, numeric_mode, real_mode, tokens, cur_token, table):
+    def __init__(self, cur_row, cur_col, string_mode, string_rec, numeric_mode, real_mode, tokens, cur_token, table, comment_mode):
         #keep track of current row
         self.cur_row = cur_row
         #keep track of current column
@@ -16,6 +16,7 @@ class Scanner(object):
         self.tokens = tokens
         self.cur_token = cur_token
         self.table = table
+        self.comment_mode = comment_mode
 
     def scan(self, input):
         output = open(input, 'r').readlines()
@@ -24,7 +25,12 @@ class Scanner(object):
             for a in line:
             #if a double quotation is seen
                 #print "currrent column scanned:"+str(self.cur_col)+" : " + a
-                if self.string_mode:
+                if self.comment_mode:
+                    self.build_comment(a)
+                    if ord(a) == 10:
+                        self.cur_col = 0
+                        self.cur_row +=1
+                elif self.string_mode:
                     self.build_string(a)
                     if ord(a) == 10:
                         self.cur_col = 0
@@ -36,7 +42,7 @@ class Scanner(object):
                         self.cur_row += 1
                 else:
                     self.build_state(a)
-                    if ord(a) == 10:
+                    if ord(a) == 10: 
                         self.cur_col = 0
                         self.cur_row += 1               
                 self.cur_col += 1
@@ -55,6 +61,19 @@ class Scanner(object):
         else:
             self.string_rec += a
             return
+
+    def build_comment(self,a):
+        if ord(a) == 41:
+            if self.cur_token:
+                self.string_rec += a
+                self.tokens.append(('TK_COMMENT', self.string_rec, self.cur_row, self.cur_col))
+                self.table.append({'TOKEN' : 'TK_COMMENT', 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col})                
+                self.comment_mode = False
+                self.cur_token =''
+                self.string_rec=''
+                return
+        else:
+            self.string_rec+=a
 
     def build_number(self, a):
         #Handles number, or real numbers.
@@ -90,7 +109,7 @@ class Scanner(object):
     def build_state(self, a):
         #state machine to keep track of current state
         #space state
-        #print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE"
+        print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE"
         if ord(a) <= 32:
             if self.cur_token:
                 if self.to_upper(self.string_rec) in self.keyword:
@@ -190,28 +209,21 @@ class Scanner(object):
         #open parenthesis
         if ord(a) == 40:
             if self.string_rec:
+                print "there's stringrec"
                 #if there's string in record prior the opening paranthesis, then string must match keyword list
                 self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
                 self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
-            self.tokens.append((self.keyword[a],a, self.cur_row, self.cur_col))
-            self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col})            
-            self.string_rec =''
-            self.cur_token = a
-            #print "oopen"
-            return
-
-        #comma
-        if ord(a) == 44:
-            #this is covered if the comma is right after the identifier
-            if self.string_rec:
-                self.tokens.append((self.keyword['IDENTIFIER'], self.string_rec, self.cur_row, self.cur_col-1))
-                self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
-                self.tokens.append((self.keyword[a], a, self.cur_row, self.cur_col))
+                self.tokens.append((self.keyword[a],a, self.cur_row, self.cur_col))
                 self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col})
-                self.string_rec =''
-                self.cur_token =''
+                self.string_rec=''
                 return
-                
+            else:
+                self.cur_token = a
+                self.string_rec = a
+                return
+            
+            #print "oopen"
+            #return
 
         #close paranthesis
         if ord(a) == 41:
@@ -225,6 +237,26 @@ class Scanner(object):
             self.string_rec=''
             self.cur_token =''
             return
+
+        #####mult, comment
+        if ord(a) == 42:
+            #if paranthesis, then its a comment, set comment mode
+            if self.cur_token:
+                self.comment_mode = True
+                self.string_rec += a
+                return
+
+        #comma
+        if ord(a) == 44:
+            #this is covered if the comma is right after the identifier
+            if self.string_rec:
+                self.tokens.append((self.keyword['IDENTIFIER'], self.string_rec, self.cur_row, self.cur_col-1))
+                self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
+                self.tokens.append((self.keyword[a], a, self.cur_row, self.cur_col))
+                self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col})
+                self.string_rec =''
+                self.cur_token =''
+                return
 
         #less state / greater state
         if ord(a) == 60 or ord(a) == 62:
@@ -322,6 +354,6 @@ if __name__ == '__main__':
     #Open file
     filename = sys.argv[1]
 
-    a = Scanner(1,1,False,'', False, False,[],'',[])
+    a = Scanner(1,1,False,'', False, False,[],'',[], False)
     a.scan(filename)
     
