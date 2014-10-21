@@ -209,22 +209,16 @@ class Scanner(object):
         #open parenthesis
         if ord(a) == 40:
             if self.string_rec:
-                print "there's stringrec"
+                print "function" + str(self.string_rec)
                 #if there's string in record prior the opening paranthesis, then string must match keyword list
                 self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
                 self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
                 self.tokens.append((self.keyword[a],a, self.cur_row, self.cur_col))
                 self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col})
                 self.string_rec=''
-                return
-            else:
                 self.cur_token = a
-                self.string_rec = a
                 return
-            
-            #print "oopen"
-            #return
-
+                
         #close paranthesis
         if ord(a) == 41:
             if self.cur_token:
