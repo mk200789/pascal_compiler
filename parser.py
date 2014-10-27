@@ -1,5 +1,5 @@
 class Parser(object):
-	def __init__(self, alist):
+	def __init__(self, alist, ):
 		self.alist = alist
 
 	def parse(self):
@@ -10,11 +10,11 @@ class Parser(object):
 		size = len(self.alist)
 		while (size):
 			print next(t)
-			print size
 			size -=1
 
 	def retrieve(self):
 		self.get_token(self.alist)
+
 
 if __name__ == '__main__':
 
