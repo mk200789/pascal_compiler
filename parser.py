@@ -65,6 +65,21 @@ class Parser(object):
 		else:
 			pass
 
+	# T' --> *F[*]T' | /F[/]T' | e
+	def term_prime(self):
+		if self.cur_token[0] == 'TK_MULT':
+			self.match('TK_MULT')
+			self.factor()
+			self.postfix('TK_MULT')
+			self.term_prime()
+		elif self.cur_token[0] == 'TK_DIV':
+			self.match('TK_DIV')
+			self.factor()
+			self.postfix('TK_DIV')
+			self.term_prime()
+		else:
+			pass
+
 	def postfix(self, t):
 		if t == 'TK_ADD':
 			self.d_nodes.append('+')
