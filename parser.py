@@ -80,6 +80,16 @@ class Parser(object):
 		else:
 			pass
 
+	# F --> id
+	def factor(self):
+		if self.cur_token[0] == 'TK_IDENTIFIER':
+			self.postfix(self.cur_token)
+			self.match('TK_IDENTIFIER')
+
+		if self.cur_token[0] == 'TK_INTEGER':
+			self.postfix(self.cur_token)
+			self.match('TK_INTEGER')
+
 	def postfix(self, t):
 		if t == 'TK_ADD':
 			self.d_nodes.append('+')
