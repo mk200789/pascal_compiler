@@ -47,7 +47,7 @@ class Scanner(object):
                         self.cur_row += 1               
                 self.cur_col += 1
         print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))                
-        #print self.tokens
+        print self.tokens
 
     def build_string(self, a):
         if ord(a) == 39:
