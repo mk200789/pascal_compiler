@@ -19,7 +19,7 @@ class Parser(object):
 
 	def retrieve(self):
 		self.get_token()
-		#self.expression()
+		self.expression()
 		#for test purposes
 		if self.cur_token[0] == 'TK_SEMICOLON':
 			return
@@ -33,6 +33,10 @@ class Parser(object):
 		else:
 			#error
 			print "error"
+
+	def error_msg(self, t):
+		#function to throw error msg for token
+		print "error, expected token: %s, and received token: %s" %(t, self.cur_token[0])
 
 	###############################
 	#							  #
