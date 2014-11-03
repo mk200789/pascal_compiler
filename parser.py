@@ -8,6 +8,8 @@ class Parser(object):
 
 	def parse(self):
 		self.retrieve()
+		print self.nodes
+		print self.d_nodes
 
 	def setup_iterator(self):
 		tokens = iter(self.alist)
@@ -69,7 +71,7 @@ class Parser(object):
 		else:
 			pass
 
-	# T' --> *F[*]T' | /F[/]T' | e
+	# T' --> *F[*]T' | /F[/]T' | modFT'|e
 	def term_prime(self):
 		if self.cur_token[0] == 'TK_MULT':
 			self.match('TK_MULT')
@@ -80,6 +82,11 @@ class Parser(object):
 			self.match('TK_DIV')
 			self.factor()
 			self.postfix('TK_DIV')
+			self.term_prime()
+		elif self.cur_token[0] == 'TK_MOD':
+			self.match('TK_MOD')
+			self.factor()
+			self.postfix('TK_MOD')
 			self.term_prime()
 		else:
 			pass
@@ -103,6 +110,8 @@ class Parser(object):
 			self.d_nodes.append('*')
 		elif t == 'TK_DIV':
 			self.d_nodes.append('/')
+		elif t == 'TK_MOD':
+			self.d_nodes.append('mod')
 		elif t[0] == 'TK_IDENTIFIER':
 			self.d_nodes.append(self.cur_token[1])
 		elif t[0] == 'TK_INTEGER':
@@ -115,7 +124,8 @@ if __name__ == '__main__':
 
 	#Open file
 	#alist = [('TK_INTEGER', '2', 1, 1), ('TK_DIV', '/', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
-	alist = [('TK_INTEGER', '2', 1, 1), ('TK_MULT', '*', 1, 3), ('TK_INTEGER', '4', 1, 5), ('TK_MINUS', '-', 1, 7), ('TK_INTEGER', '6', 1, 9), ('TK_MULT', '*', 1, 11), ('TK_INTEGER', '3', 1, 7), ('TK_SEMICOLON', ';', 1, 6)]
+	#alist = [('TK_INTEGER', '2', 1, 1), ('TK_MULT', '*', 1, 3), ('TK_INTEGER', '4', 1, 5), ('TK_MINUS', '-', 1, 7), ('TK_INTEGER', '6', 1, 9), ('TK_MULT', '*', 1, 11), ('TK_INTEGER', '3', 1, 7), ('TK_SEMICOLON', ';', 1, 6)]
+	alist = [('TK_INTEGER', '2', 1, 1), ('TK_MOD', 'mod', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
 
 	#get_token(alist)
 	a = Parser(alist, 0)
