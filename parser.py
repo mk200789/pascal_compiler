@@ -111,7 +111,7 @@ class Parser(object):
 		elif t == 'TK_DIV':
 			self.d_nodes.append('/')
 		elif t == 'TK_MOD':
-			self.d_nodes.append('mod')
+			self.d_nodes.append({'value':'mod', 'type' :self.cur_token[1]})
 		elif t[0] == 'TK_IDENTIFIER':
 			self.d_nodes.append(self.cur_token[1])
 		elif t[0] == 'TK_INTEGER':
