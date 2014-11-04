@@ -329,7 +329,7 @@ class Scanner(object):
         '*'         : 'TK_MULT',
         '/'         : 'TK_DIV',
         'DIV'       : 'TK_DIV_FLOAT',
-        'MOD'       : 'TK_MODE',
+        'MOD'       : 'TK_MOD',
         'AND'       : 'TK_AND',
         'OR'        : 'TK_OR',
         'NOT'       : 'TK_NOT',
