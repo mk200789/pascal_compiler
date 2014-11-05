@@ -103,19 +103,19 @@ class Parser(object):
 
 	def postfix(self, t):
 		if t == 'TK_ADD':
-			self.d_nodes.append('+')
+			self.d_nodes.append({'value':'+', 'type' :self.cur_token[1]})
 		elif t == 'TK_MINUS':
-			self.d_nodes.append('-')
+			self.d_nodes.append({'value':'-', 'type' :self.cur_token[1]})
 		elif t == 'TK_MULT':
-			self.d_nodes.append('*')
+			self.d_nodes.append({'value':'*', 'type' :self.cur_token[1]})
 		elif t == 'TK_DIV':
-			self.d_nodes.append('/')
+			self.d_nodes.append({'value':'/', 'type' :self.cur_token[1]})
 		elif t == 'TK_MOD':
 			self.d_nodes.append({'value':'mod', 'type' :self.cur_token[1]})
 		elif t[0] == 'TK_IDENTIFIER':
-			self.d_nodes.append(self.cur_token[1])
+			self.d_nodes.append({'value':self.cur_token[0], 'type' :self.cur_token[1]})
 		elif t[0] == 'TK_INTEGER':
-			self.d_nodes.append(self.cur_token[1])
+			self.d_nodes.append({'value':self.cur_token[0], 'type' :self.cur_token[1]})
 		else:
 			pass
 
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 	#Open file
 	#alist = [('TK_INTEGER', '2', 1, 1), ('TK_DIV', '/', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
 	#alist = [('TK_INTEGER', '2', 1, 1), ('TK_MULT', '*', 1, 3), ('TK_INTEGER', '4', 1, 5), ('TK_MINUS', '-', 1, 7), ('TK_INTEGER', '6', 1, 9), ('TK_MULT', '*', 1, 11), ('TK_INTEGER', '3', 1, 7), ('TK_SEMICOLON', ';', 1, 6)]
-	alist = [('TK_INTEGER', '2', 1, 1), ('TK_MOD', 'mod', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
+	alist = [('TK_IDENTIFIER', 'a', 1, 1), ('TK_MOD', 'mod', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
 
 	#get_token(alist)
 	a = Parser(alist, 0)
