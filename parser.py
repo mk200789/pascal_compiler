@@ -37,7 +37,7 @@ class Parser(object):
 				self.nodes.append(self.cur_token[1])
 			#get next token
 			self.get_token()
-			return
+			return True
 		else:
 			#error
 			print "error"
@@ -58,6 +58,7 @@ class Parser(object):
 			self.match('TK_OPEN_PARENTHESIS')
 			self.expression()
 			self.match('TK_CLOSE_PARENTHESIS')
+			self.postfix('TK_WRITELN')
 
 	###############################
 	#							  #
@@ -121,21 +122,24 @@ class Parser(object):
 			self.match('TK_INTEGER')
 
 	def postfix(self, t):
-		#print self.cur_token
+		#print "current_token: "+ str(self.cur_token) +" or t:" + str(t)
+
 		if t == 'TK_ADD':
-			self.d_nodes.append({'value':'+', 'type' :self.cur_token[1]})
+			self.d_nodes.append({'value':'+', 'type' :t})
 		elif t == 'TK_MINUS':
-			self.d_nodes.append({'value':'-', 'type' :self.cur_token[1]})
+			self.d_nodes.append({'value':'-', 'type' :t})
 		elif t == 'TK_MULT':
-			self.d_nodes.append({'value':'*', 'type' :self.cur_token[1]})
+			self.d_nodes.append({'value':'*', 'type' :t})
 		elif t == 'TK_DIV':
-			self.d_nodes.append({'value':'/', 'type' :self.cur_token[1]})
+			self.d_nodes.append({'value':'/', 'type' :t})
 		elif t == 'TK_MOD':
-			self.d_nodes.append({'value':'mod', 'type' :self.cur_token[1]})
+			self.d_nodes.append({'value':'mod', 'type' :t})
 		elif t[0] == 'TK_IDENTIFIER':
-			self.d_nodes.append({'value':self.cur_token[0], 'type' :self.cur_token[1]})
+			self.d_nodes.append({'value':self.cur_token[1], 'type' :self.cur_token[0]})
 		elif t[0] == 'TK_INTEGER':
-			self.d_nodes.append({'value':self.cur_token[0], 'type' :self.cur_token[1]})
+			self.d_nodes.append({'value':self.cur_token[1], 'type' :self.cur_token[0]})		
+		elif t == 'TK_WRITELN':
+			self.d_nodes.append({'value': 'writeln', 'type': t})
 		else:
 			pass
 
@@ -143,10 +147,12 @@ class Parser(object):
 if __name__ == '__main__':
 
 	#Open file
+	#alist = [('TK_INTEGER', '2', 1, 1), ('TK_ADD', '+', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
 	#alist = [('TK_INTEGER', '2', 1, 1), ('TK_DIV', '/', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
 	#alist = [('TK_INTEGER', '2', 1, 1), ('TK_MULT', '*', 1, 3), ('TK_INTEGER', '4', 1, 5), ('TK_MINUS', '-', 1, 7), ('TK_INTEGER', '6', 1, 9), ('TK_MULT', '*', 1, 11), ('TK_INTEGER', '3', 1, 7), ('TK_SEMICOLON', ';', 1, 6)]
-	alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_IDENTIFIER', 'b', 1, 9), ('TK_CLOSE_PARENTHESIS', ')', 1, 10), ('TK_SEMICOLON', ';', 1, 11)]
+	#alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_IDENTIFIER', 'b', 1, 9), ('TK_CLOSE_PARENTHESIS', ')', 1, 10), ('TK_SEMICOLON', ';', 1, 11)]
 	#alist = [('TK_IDENTIFIER', 'a', 1, 1), ('TK_MOD', 'mod', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
+	alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_INTEGER', '1', 1, 9), ('TK_ADD', '+', 1, 10), ('TK_INTEGER', '1', 1, 11), ('TK_CLOSE_PARENTHESIS', ')', 1, 12), ('TK_SEMICOLON', ';', 1, 13)]
 
 	#get_token(alist)
 	a = Parser(alist, 0)
