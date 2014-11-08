@@ -21,8 +21,9 @@ class Parser(object):
 
 	def retrieve(self):
 		self.get_token()
-		self.write_statement()
 		self.expression()
+		self.write_statement()
+		self.assignment()		
 		#for test purposes
 		if self.cur_token[0] == 'TK_SEMICOLON':
 			return
@@ -67,6 +68,11 @@ class Parser(object):
 	###############################
 	def assignment(self):
 		#handles := 
+		if self.cur_token[0] == 'TK_ASSIGNMENT':
+			print self.cur_token
+			self.match('TK_ASSIGNMENT')
+			self.expression()
+		
 
 	###############################
 	#							  #
@@ -161,7 +167,8 @@ if __name__ == '__main__':
 	#alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_IDENTIFIER', 'b', 1, 9), ('TK_CLOSE_PARENTHESIS', ')', 1, 10), ('TK_SEMICOLON', ';', 1, 11)]
 	#alist = [('TK_IDENTIFIER', 'a', 1, 1), ('TK_MOD', 'mod', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
 	#alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_INTEGER', '1', 1, 9), ('TK_ADD', '+', 1, 10), ('TK_INTEGER', '1', 1, 11), ('TK_CLOSE_PARENTHESIS', ')', 1, 12), ('TK_SEMICOLON', ';', 1, 13)]
-	alist = alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_IDENTIFIER', 'b', 1, 9), ('TK_CLOSE_PARENTHESIS', ')', 1, 12), ('TK_SEMICOLON', ';', 1, 13)]
+	#alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_IDENTIFIER', 'b', 1, 9), ('TK_CLOSE_PARENTHESIS', ')', 1, 12), ('TK_SEMICOLON', ';', 1, 13)]
+	alist = [('TK_IDENTIFIER', 'x', 1, 1), ('TK_ASSIGNMENT', ':=', 1, 4), ('TK_INTEGER', '2', 1, 6), ('TK_SEMICOLON', ';', 1, 7)]
 
 	#get_token(alist)
 	a = Parser(alist, 0)
