@@ -81,7 +81,7 @@ class Scanner(object):
             self.string_rec += a
 
         #if character is a space or symbol, build a new token
-        if ord(a) > 57 or ord(a) <= 32:
+        if ord(a) > 57 or ord(a) <= 41:
             self.numeric_mode = False
             if self.real_mode:
                 #print "Row " + str(self.cur_row) +" : "+ str(self.string_rec) + " is a real number."
@@ -95,8 +95,11 @@ class Scanner(object):
 
             #check current character
             if a in self.keyword:
+                if self.cur_token:
+                    self.cur_token =''
                 self.tokens.append(( self.keyword[a], a, self.cur_row, self.cur_col))
                 self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col})
+
             self.string_rec = ''
             return
 
@@ -110,6 +113,7 @@ class Scanner(object):
         #state machine to keep track of current state
         #space state
         print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE"
+        print "+is there token: "+ str(self.cur_token)
         if ord(a) <= 32:
             if self.cur_token:
                 if self.to_upper(self.string_rec) in self.keyword:
@@ -138,7 +142,7 @@ class Scanner(object):
             return
 
         #numeric state
-        if a.isdigit() and not self.cur_token:
+        if a.isdigit() :
             self.numeric_mode = True
             self.string_rec += a
             return
