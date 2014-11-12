@@ -1,10 +1,11 @@
 class Parser(object):
-	def __init__(self, alist, cur_token, nodes=[], d_nodes=[]):
+	def __init__(self, alist, cur_token, nodes=[], d_nodes=[], sym_table=[]):
 		self.alist = alist
 		self.cur_token = cur_token
 		self.iterator = self.setup_iterator()
 		self.d_nodes = d_nodes
-		self.nodes = nodes	
+		self.nodes = nodes
+		self.sym_table = sym_table
 
 	def parse(self):
 		self.retrieve()
@@ -21,6 +22,7 @@ class Parser(object):
 
 	def retrieve(self):
 		self.get_token()
+		self.var_declaration()
 		self.expression()
 		self.write_statement()
 		self.assignment()		
@@ -52,9 +54,10 @@ class Parser(object):
 	# Var declaration	   		  #
 	#							  #
 	###############################
-	def var_declaration:
+	def var_declaration(self):
 		#parse VAR
-
+		if self.cur_token[0] == 'TK_VAR':
+			self.match('TK_VAR')
 
 	###############################
 	#							  #
@@ -177,7 +180,8 @@ if __name__ == '__main__':
 	#alist = [('TK_IDENTIFIER', 'a', 1, 1), ('TK_MOD', 'mod', 1, 3), ('TK_INTEGER', '3', 1, 5), ('TK_SEMICOLON', ';', 1, 6)]
 	#alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_INTEGER', '1', 1, 9), ('TK_ADD', '+', 1, 10), ('TK_INTEGER', '1', 1, 11), ('TK_CLOSE_PARENTHESIS', ')', 1, 12), ('TK_SEMICOLON', ';', 1, 13)]
 	#alist = [('TK_WRITELN', 'writeln', 1, 7), ('TK_OPEN_PARENTHESIS', '(', 1, 8), ('TK_IDENTIFIER', 'b', 1, 9), ('TK_CLOSE_PARENTHESIS', ')', 1, 12), ('TK_SEMICOLON', ';', 1, 13)]
-	alist = [('TK_IDENTIFIER', 'x', 1, 1), ('TK_ASSIGNMENT', ':=', 1, 4), ('TK_INTEGER', '2', 1, 6), ('TK_SEMICOLON', ';', 1, 7)]
+	#alist = [('TK_IDENTIFIER', 'x', 1, 1), ('TK_ASSIGNMENT', ':=', 1, 4), ('TK_INTEGER', '2', 1, 6), ('TK_SEMICOLON', ';', 1, 7)]
+	alist = [('TK_VAR', 'var', 1, 3), ('TK_IDENTIFIER', 'x', 1, 4), ('TK_COLON', ':', 1, 6), ('TK_ID_INTEGER', 'integer', 1, 14), ('TK_SEMICOLON', ';', 1, 15)]
 
 	#get_token(alist)
 	a = Parser(alist, 0)
