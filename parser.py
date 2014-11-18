@@ -78,6 +78,8 @@ class Parser(object):
 	#		elif self.cur_token[0] == 'TK_COLON':
 	#			self.match('TK_COLON')
 	#			break
+	#	if self.cur_token[0] == 'TK_ID_INTEGER':
+	#		match('TK_ID_INTEGER')
 
 
 	###############################
