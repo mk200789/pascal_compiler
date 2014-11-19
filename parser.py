@@ -1,11 +1,12 @@
 class Parser(object):
-	def __init__(self, alist, cur_token, nodes=[], d_nodes=[], sym_table=[]):
+	def __init__(self, alist, cur_token, nodes=[], d_nodes=[], sym_table=[], address =0):
 		self.alist = alist
 		self.cur_token = cur_token
 		self.iterator = self.setup_iterator()
 		self.d_nodes = d_nodes
 		self.nodes = nodes
 		self.sym_table = sym_table
+		self.address = address
 
 	def parse(self):
 		self.retrieve()
@@ -56,6 +57,10 @@ class Parser(object):
 	# Program 		  	 		  #
 	#							  #
 	###############################
+	#<program> -->
+	#				<declarations>
+	#				<begin statement>
+	#				<halt>
 	def program(self):
 		if self.cur_token[0] == 'TK_PROGRAM':
 			self.match('TK_PROGRAM')
@@ -65,6 +70,8 @@ class Parser(object):
 	# Var declaration	   		  #
 	#							  #
 	###############################
+	#<var declaration> -->
+	#						write (<expression>)
 	#def var_declaration(self):
 		#parse VAR
 	#	if self.cur_token[0] == 'TK_VAR':
@@ -73,6 +80,8 @@ class Parser(object):
 	#	while (True):
 	#		if self.cur_token[0] == 'TK_IDENTIFIER':
 	#			self.match('TK_IDENTIFIER')
+	#			self.sym_table =({'NAME': self.cur_token[1], 'ADDRESS': self.address, 'TYPE': 'none'})
+	#			self.address += 4
 	#		elif self.cur_token[0] == 'TK_COMMA':
 	#			self.match('TK_COMMA')
 	#		elif self.cur_token[0] == 'TK_COLON':
