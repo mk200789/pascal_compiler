@@ -12,6 +12,7 @@ class Parser(object):
 		self.retrieve()
 		print "nodes: "+str(self.nodes)
 		print "dnodes: "+str(self.d_nodes)
+		print "sym_table: "+str(self.sym_table)
 
 	def setup_iterator(self):
 		tokens = iter(self.alist)
@@ -23,11 +24,7 @@ class Parser(object):
 
 	def retrieve(self):
 		self.get_token()
-		#self.var_declaration()
 		self.program()
-		#self.expression()
-		#self.write_statement()
-		#self.assignment()
 
 	def match(self, t):
 		print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
@@ -89,8 +86,8 @@ class Parser(object):
 		while (True):
 			if self.cur_token[0] == 'TK_IDENTIFIER':
 				print "MATCHED TK_IDENTIFIER current token :" + str(self.cur_token)
+				self.sym_table.append({'NAME': self.cur_token[1], 'ADDRESS': self.address, 'TYPE': 'none'})
 				self.match('TK_IDENTIFIER')
-				self.sym_table =({'NAME': self.cur_token[1], 'ADDRESS': self.address, 'TYPE': 'none'})
 				self.address += 4
 			elif self.cur_token[0] == 'TK_COMMA':
 				print "MATCHED TK_COMMA current token :" + str(self.cur_token)
@@ -167,12 +164,12 @@ class Parser(object):
 	# Assignment		   		  #
 	#							  #
 	###############################
-	def assignment(self):
+	#def assignment(self):
 		#handles := 
-		if self.cur_token[0] == 'TK_ASSIGNMENT':
-			print self.cur_token
-			self.match('TK_ASSIGNMENT')
-			self.expression()
+	#	if self.cur_token[0] == 'TK_ASSIGNMENT':
+	#		print self.cur_token
+	#		self.match('TK_ASSIGNMENT')
+	#		self.expression()
 		
 
 	###############################
