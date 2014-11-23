@@ -104,6 +104,13 @@ class Parser(object):
 					v['TYPE'] = 'integer'
 			self.match('TK_ID_INTEGER')
 
+		if self.cur_token[0] == 'TK_ID_STRING':
+			print "MATCHED TK_ID_STRING current token :" + str(self.cur_token)
+			for v in self.sym_table:
+				if v['TYPE'] == 'none':
+					v['TYPE'] = 'string'
+			self.match('TK_ID_STRING')
+
 		if self.cur_token[0] == 'TK_SEMICOLON':
 			print "MATCHED TK_SEMICOLON current token :" + str(self.cur_token)
 			self.match('TK_SEMICOLON')
