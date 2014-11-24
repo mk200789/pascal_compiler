@@ -118,6 +118,15 @@ class Parser(object):
 		self.var_declaration()
 
 
+	###############################
+	#							  #
+	# Begin statements			  #
+	#							  #
+	###############################
+	#<begin-statement> -->
+	#						begin <statements> end
+	#def begin_statement(self):
+
 
 	###############################
 	#							  #
