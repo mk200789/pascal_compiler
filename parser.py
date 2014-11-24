@@ -61,9 +61,6 @@ class Parser(object):
 			print "MATCHED TK_PROGRAM"
 			self.match('TK_PROGRAM')
 			self.var_declaration()
-			#self.match('TK_IDENTIFIER')
-			#self.match('TK_SEMICOLON')
-			#self.var_declaration()
 
 	###############################
 	#							  #
@@ -74,45 +71,45 @@ class Parser(object):
 
 	def var_declaration(self):
 		#parse VAR
-		print "VAR_DECLARATION(). current token :" + str(self.cur_token)
+		#print "VAR_DECLARATION(). current token :" + str(self.cur_token)
 		if self.cur_token[0] == 'TK_VAR':
 			print "MATCHED TK_VAR"
 			self.match('TK_VAR')
 		else:
-			self.statements()
+			self.begin_statement()
 			return
 
 		print "var declaration"
 		while (True):
 			if self.cur_token[0] == 'TK_IDENTIFIER':
-				print "MATCHED TK_IDENTIFIER current token :" + str(self.cur_token)
+				#print "MATCHED TK_IDENTIFIER current token :" + str(self.cur_token)
 				self.sym_table.append({'NAME': self.cur_token[1], 'ADDRESS': self.address, 'TYPE': 'none'})
 				self.match('TK_IDENTIFIER')
 				self.address += 4
 			elif self.cur_token[0] == 'TK_COMMA':
-				print "MATCHED TK_COMMA current token :" + str(self.cur_token)
+				#print "MATCHED TK_COMMA current token :" + str(self.cur_token)
 				self.match('TK_COMMA')
 			elif self.cur_token[0] == 'TK_COLON':
-				print "MATCHED TK_COLON current token :" + str(self.cur_token)
+				#print "MATCHED TK_COLON current token :" + str(self.cur_token)
 				self.match('TK_COLON')
 				break
 
 		if self.cur_token[0] == 'TK_ID_INTEGER':
-			print "MATCHED TK_ID_INTEGER current token :" + str(self.cur_token)
+			#print "MATCHED TK_ID_INTEGER current token :" + str(self.cur_token)
 			for v in self.sym_table:
 				if v['TYPE'] == 'none':
 					v['TYPE'] = 'integer'
 			self.match('TK_ID_INTEGER')
 
 		if self.cur_token[0] == 'TK_ID_STRING':
-			print "MATCHED TK_ID_STRING current token :" + str(self.cur_token)
+			#print "MATCHED TK_ID_STRING current token :" + str(self.cur_token)
 			for v in self.sym_table:
 				if v['TYPE'] == 'none':
 					v['TYPE'] = 'string'
 			self.match('TK_ID_STRING')
 
 		if self.cur_token[0] == 'TK_SEMICOLON':
-			print "MATCHED TK_SEMICOLON current token :" + str(self.cur_token)
+			#print "MATCHED TK_SEMICOLON current token :" + str(self.cur_token)
 			self.match('TK_SEMICOLON')
 
 		self.var_declaration()
@@ -125,7 +122,12 @@ class Parser(object):
 	###############################
 	#<begin-statement> -->
 	#						begin <statements> end
-	#def begin_statement(self):
+	def begin_statement(self):
+		if self.cur_token[0] == 'TK_BEGIN':
+			print "MATCHED TK_BEGIN current token :" + str(self.cur_token)
+			self.match('TK_BEGIN')
+		self.statements()
+		return
 
 
 	###############################
@@ -143,22 +145,22 @@ class Parser(object):
 	#					<assignment statement>
 	#					<proc call statement>
 	def statements(self):
-		print "statements()"
+		#print "statements()"
 		while(True):
-			print "while1"
+			#print "while1"
 			if self.cur_token[0] == 'TK_IDENTIFIER':
-				print "MATCHED with current token: " + str(self.cur_token)
+				#print "MATCHED with current token: " + str(self.cur_token)
 				self.match('TK_IDENTIFIER')
 
-			print "while2"
+			#print "while2"
 			if self.cur_token[0] == 'TK_SEMICOLON':
-				print "MATCHED with current token: " + str(self.cur_token)
+				#print "MATCHED with current token: " + str(self.cur_token)
 				self.match('TK_SEMICOLON')
 				self.var_declaration()
 
-			print "while3"
+			#print "while3"
 			if self.cur_token[0] == 'TK_END_DOT':
-				print "MATCHED with current token: " + str(self.cur_token)
+				#print "MATCHED with current token: " + str(self.cur_token)
 				break
 		return
 
@@ -288,7 +290,7 @@ if __name__ == '__main__':
 	#alist = [('TK_IDENTIFIER', 'x', 1, 1), ('TK_ASSIGNMENT', ':=', 1, 4), ('TK_INTEGER', '2', 1, 6), ('TK_SEMICOLON', ';', 1, 7)]
 	#alist = [('TK_VAR', 'var', 1, 3), ('TK_IDENTIFIER', 'x', 1, 4), ('TK_COLON', ':', 1, 6), ('TK_ID_INTEGER', 'integer', 1, 14), ('TK_SEMICOLON', ';', 1, 15)]
 	
-	alist = [('TK_PROGRAM', 'program', 1, 7), ('TK_IDENTIFIER', 'helloW', 1, 14), ('TK_SEMICOLON', ';', 1, 15), ('TK_VAR', 'var', 3, 3), ('TK_IDENTIFIER', 'x', 3, 4), ('TK_COLON', ':', 3, 6), ('TK_ID_INTEGER', 'integer', 3, 14), ('TK_SEMICOLON', ';', 3, 15), ('TK_VAR', 'var', 4, 3), ('TK_IDENTIFIER', 'a', 4, 5), ('TK_COMMA', ',', 4, 6), ('TK_IDENTIFIER', 'b', 4, 8), ('TK_COMMA', ',', 4, 9), ('TK_IDENTIFIER', 'c', 4, 10), ('TK_COLON', ':', 4, 12), ('TK_ID_INTEGER', 'integer', 4, 20), ('TK_SEMICOLON', ';', 4, 21), ('TK_END_DOT', 'end.', 5, 4)]
+	alist = [('TK_PROGRAM', 'program', 1, 7), ('TK_IDENTIFIER', 'helloW', 1, 14), ('TK_SEMICOLON', ';', 1, 15), ('TK_VAR', 'var', 3, 3), ('TK_IDENTIFIER', 'x', 3, 4), ('TK_COLON', ':', 3, 6), ('TK_ID_INTEGER', 'integer', 3, 14), ('TK_SEMICOLON', ';', 3, 15), ('TK_VAR', 'var', 4, 3), ('TK_IDENTIFIER', 'a', 4, 5), ('TK_COMMA', ',', 4, 6), ('TK_IDENTIFIER', 'b', 4, 8), ('TK_COMMA', ',', 4, 9), ('TK_IDENTIFIER', 'c', 4, 10), ('TK_COLON', ':', 4, 12), ('TK_ID_INTEGER', 'integer', 4, 20), ('TK_SEMICOLON', ';', 4, 21), ('TK_BEGIN', 'begin', 5, 5), ('TK_END_DOT', 'end.', 6, 4)]
 
 	#get_token(alist)
 	a = Parser(alist, 0)
