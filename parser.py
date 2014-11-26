@@ -284,19 +284,19 @@ class Parser(object):
 		#print "current_token: "+ str(self.cur_token) +" or t:" + str(t)
 
 		if t == 'TK_ADD':
-			self.d_nodes.append({'value':'+', 'type' :t})
+			self.d_nodes.append({'instruction': 'add','value':'+', 'type' :t})
 		elif t == 'TK_MINUS':
-			self.d_nodes.append({'value':'-', 'type' :t})
+			self.d_nodes.append({'instruction': 'minus','value':'-', 'type' :t})
 		elif t == 'TK_MULT':
-			self.d_nodes.append({'value':'*', 'type' :t})
+			self.d_nodes.append({'instruction': 'mult','value':'*', 'type' :t})
 		elif t == 'TK_DIV':
-			self.d_nodes.append({'value':'/', 'type' :t})
+			self.d_nodes.append({'instruction': 'div','value':'/', 'type' :t})
 		elif t == 'TK_MOD':
-			self.d_nodes.append({'value':'mod', 'type' :t})
+			self.d_nodes.append({'instruction': 'mod','value':'mod', 'type' :t})
 		elif t[0] == 'TK_IDENTIFIER':
-			self.d_nodes.append({'value':self.cur_token[1], 'type' :self.cur_token[0]})
+			self.d_nodes.append({'instruction': 'push','value':self.cur_token[1], 'type' :self.cur_token[0]})
 		elif t[0] == 'TK_INTEGER':
-			self.d_nodes.append({'value':self.cur_token[1], 'type' :self.cur_token[0]})		
+			self.d_nodes.append({'instruction': 'push','value':self.cur_token[1], 'type' :self.cur_token[0]})		
 		elif t == 'TK_WRITELN':
 			self.d_nodes.append({'value': 'writeln', 'type': t})
 		else:
