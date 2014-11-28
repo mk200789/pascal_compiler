@@ -1,5 +1,5 @@
 class Parser(object):
-	def __init__(self, alist, cur_token, nodes=[], d_nodes=[], sym_table=[], address =0):
+	def __init__(self, alist, cur_token, nodes=[], d_nodes=[], sym_table=[], address =0, lhs='', rhs =''):
 		self.alist = alist
 		self.cur_token = cur_token
 		self.iterator = self.setup_iterator()
@@ -7,6 +7,8 @@ class Parser(object):
 		self.nodes = nodes
 		self.sym_table = sym_table
 		self.address = address
+		self.lhs = lhs
+		self.rhs = rhs
 
 	def parse(self):
 		self.retrieve()
