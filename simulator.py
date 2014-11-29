@@ -7,7 +7,8 @@ class Simulator(object):
 
 	def simulate(self, d_nodes):
 		for d in d_nodes:
-			print d
+			if d['instruction'] == 'push':
+				print d
 
 
 
