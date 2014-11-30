@@ -8,7 +8,10 @@ class Simulator(object):
 	def simulate(self, d_nodes):
 		for d in d_nodes:
 			if d['instruction'] == 'push':
-				print d
+				if d['type'] == 'IDENTIFIER':
+					print "pushi"
+				else:
+					print "push"
 
 
 
