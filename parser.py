@@ -170,15 +170,17 @@ class Parser(object):
 			if self.cur_token[0] == 'TK_IDENTIFIER':
 				#print "MATCHED with current token: " + str(self.cur_token)
 				self.match('TK_IDENTIFIER')
+				self.expression()
 
 			#print "while2"
 			if self.cur_token[0] == 'TK_SEMICOLON':
 				#print "MATCHED with current token: " + str(self.cur_token)
 				self.match('TK_SEMICOLON')
 				self.var_declaration()
-			
-			#print while4
-			self.expression()
+
+			#if self.cur_token[0] =='TK_ASSIGNMENT':
+			#	self.match('TK_ASSIGNMENT')
+
 
 			#print "while3"
 			if self.cur_token[0] == 'TK_END_DOT':
@@ -268,7 +270,7 @@ class Parser(object):
 		else:
 			pass
 
-	# F --> id
+	# F --> id | lit | ( E ) | -F | +F | not F
 	def factor(self):
 		print self.cur_token
 		if self.cur_token[0] == 'TK_IDENTIFIER':
@@ -280,6 +282,12 @@ class Parser(object):
 		if self.cur_token[0] == 'TK_INTEGER':
 			self.postfix(self.cur_token)
 			self.match('TK_INTEGER')
+			return
+
+		if self.cur_token[0] == 'TK_NOT':
+			self.match('TK_NOT')
+			self.factor()
+			self.postfix(self.cur_token)
 			return
 
 	def postfix(self, t):
