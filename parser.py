@@ -177,6 +177,16 @@ class Parser(object):
 				print "MATCHED with current token: " + str(self.cur_token)
 				self.match('TK_IDENTIFIER')
 				self.expression()
+			
+			#handles for loops
+			if self.cur_token[0] == 'TK_FOR':
+				self.match('TK_FOR')
+				self.expression()
+				#self.match('TK_TO')
+				#self.expression()
+				#print "pineapple"
+				#self.match('TK_DO')
+				#self.begin_statement()
 
 			if self.cur_token[0] =='TK_ASSIGNMENT':
 				print "MATCHED with current token: " + str(self.cur_token)
@@ -191,7 +201,7 @@ class Parser(object):
 				self.var_declaration()
 
 			#print "while3"
-			if self.cur_token[0] == 'TK_END_DOT':
+			if self.cur_token[0] == 'TK_END_DOT' or self.cur_token[0] == 'TK_END':
 				#print "MATCHED with current token: " + str(self.cur_token)
 				break
 
@@ -268,7 +278,7 @@ class Parser(object):
 
 	# F --> id | lit | ( E ) | -F | +F | not F
 	def factor(self):
-		print self.cur_token
+		#print self.cur_token
 		if self.cur_token[0] == 'TK_IDENTIFIER':
 			self.postfix(self.cur_token)
 			self.match('TK_IDENTIFIER')
@@ -313,8 +323,10 @@ class Parser(object):
 if __name__ == '__main__':
 	
 	#alist = [('TK_PROGRAM', 'program', 1, 7), ('TK_IDENTIFIER', 'helloW', 1, 14), ('TK_SEMICOLON', ';', 1, 15), ('TK_VAR', 'var', 3, 3), ('TK_IDENTIFIER', 'x', 3, 4), ('TK_COLON', ':', 3, 6), ('TK_ID_INTEGER', 'integer', 3, 14), ('TK_SEMICOLON', ';', 3, 15), ('TK_VAR', 'var', 4, 3), ('TK_IDENTIFIER', 'a', 4, 5), ('TK_COMMA', ',', 4, 6), ('TK_IDENTIFIER', 'b', 4, 8), ('TK_COMMA', ',', 4, 9), ('TK_IDENTIFIER', 'c', 4, 10), ('TK_COLON', ':', 4, 12), ('TK_ID_INTEGER', 'integer', 4, 20), ('TK_SEMICOLON', ';', 4, 21), ('TK_BEGIN', 'begin', 5, 5), ('TK_IDENTIFIER', 'x', 6, 1), ('TK_ADD', '+', 6, 2), ('TK_INTEGER', '4', 6, 5), ('TK_SEMICOLON', ';', 6, 6), ('TK_END_DOT', 'end.', 7, 4)]
-	alist = [('TK_PROGRAM', 'program', 1, 7), ('TK_IDENTIFIER', 'helloW', 1, 14), ('TK_SEMICOLON', ';', 1, 15), ('TK_VAR', 'var', 3, 3), ('TK_IDENTIFIER', 'x', 3, 4), ('TK_COLON', ':', 3, 6), ('TK_ID_INTEGER', 'integer', 3, 14), ('TK_SEMICOLON', ';', 3, 15), ('TK_VAR', 'var', 4, 3), ('TK_IDENTIFIER', 'a', 4, 5), ('TK_COMMA', ',', 4, 6), ('TK_IDENTIFIER', 'b', 4, 8), ('TK_COMMA', ',', 4, 9), ('TK_IDENTIFIER', 'c', 4, 10), ('TK_COLON', ':', 4, 12), ('TK_ID_INTEGER', 'integer', 4, 20), ('TK_SEMICOLON', ';', 4, 21), ('TK_BEGIN', 'begin', 5, 5), ('TK_IDENTIFIER', 'x', 6, 1), ('TK_ASSIGNMENT', ':=', 6, 4), ('TK_NOT', 'not', 6, 8), ('TK_IDENTIFIER', 'b', 6, 10), ('TK_SEMICOLON', ';', 6, 11), ('TK_END_DOT', 'end.', 7, 4)]
+	#alist = [('TK_PROGRAM', 'program', 1, 7), ('TK_IDENTIFIER', 'helloW', 1, 14), ('TK_SEMICOLON', ';', 1, 15), ('TK_VAR', 'var', 3, 3), ('TK_IDENTIFIER', 'x', 3, 4), ('TK_COLON', ':', 3, 6), ('TK_ID_INTEGER', 'integer', 3, 14), ('TK_SEMICOLON', ';', 3, 15), ('TK_VAR', 'var', 4, 3), ('TK_IDENTIFIER', 'a', 4, 5), ('TK_COMMA', ',', 4, 6), ('TK_IDENTIFIER', 'b', 4, 8), ('TK_COMMA', ',', 4, 9), ('TK_IDENTIFIER', 'c', 4, 10), ('TK_COLON', ':', 4, 12), ('TK_ID_INTEGER', 'integer', 4, 20), ('TK_SEMICOLON', ';', 4, 21), ('TK_BEGIN', 'begin', 5, 5), ('TK_IDENTIFIER', 'x', 6, 1), ('TK_ASSIGNMENT', ':=', 6, 4), ('TK_NOT', 'not', 6, 8), ('TK_IDENTIFIER', 'b', 6, 10), ('TK_SEMICOLON', ';', 6, 11), ('TK_END_DOT', 'end.', 7, 4)]
 	#alist = [('TK_PROGRAM', 'program', 1, 7), ('TK_IDENTIFIER', 'helloW', 1, 14), ('TK_SEMICOLON', ';', 1, 15), ('TK_VAR', 'var', 3, 3), ('TK_IDENTIFIER', 'x', 3, 4), ('TK_COLON', ':', 3, 6), ('TK_ID_INTEGER', 'integer', 3, 14), ('TK_SEMICOLON', ';', 3, 15), ('TK_VAR', 'var', 4, 3), ('TK_IDENTIFIER', 'a', 4, 5), ('TK_COMMA', ',', 4, 6), ('TK_IDENTIFIER', 'b', 4, 8), ('TK_COMMA', ',', 4, 9), ('TK_IDENTIFIER', 'c', 4, 10), ('TK_COLON', ':', 4, 12), ('TK_ID_INTEGER', 'integer', 4, 20), ('TK_SEMICOLON', ';', 4, 21), ('TK_BEGIN', 'begin', 5, 5), ('TK_IDENTIFIER', 'x', 6, 1), ('TK_ASSIGNMENT', ':=', 6, 4), ('TK_IDENTIFIER', 'a', 6, 6), ('TK_MULT', '*', 6, 7), ('TK_IDENTIFIER', 'b', 6, 10), ('TK_SEMICOLON', ';', 6, 11), ('TK_END_DOT', 'end.', 7, 4)]
+	#loop 
+	alist = [('TK_PROGRAM', 'program', 1, 7), ('TK_IDENTIFIER', 'forLoop', 1, 15), ('TK_SEMICOLON', ';', 1, 16), ('TK_VAR', 'var', 2, 3), ('TK_IDENTIFIER', 'a', 3, 3), ('TK_COLON', ':', 3, 5), ('TK_ID_INTEGER', 'integer', 3, 13), ('TK_SEMICOLON', ';', 3, 14), ('TK_BEGIN', 'begin', 4, 5), ('TK_FOR', 'for', 5, 6), ('TK_IDENTIFIER', 'a', 5, 8), ('TK_ASSIGNMENT', ':=', 5, 11), ('TK_INTEGER', '10', 5, 14), ('TK_TO', 'to', 5, 18), ('TK_INTEGER', '20', 5, 21), ('TK_DO', 'do', 5, 24), ('TK_BEGIN', 'begin', 6, 8), ('TK_WRITELN', 'writeln', 7, 13), ('TK_OPEN_PARENTHESIS', '(', 7, 14), ('TK_STRING', "'a'", 7, 17), ('TK_CLOSE_PARENTHESIS', ')', 7, 18), ('TK_SEMICOLON', ';', 7, 19), ('TK_END', 'end;', 8, 6), ('TK_END_DOT', 'end.', 9, 4)]
 
 	#get_token(alist)
 	a = Parser(alist, 0)
