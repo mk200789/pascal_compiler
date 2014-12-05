@@ -178,15 +178,6 @@ class Parser(object):
 				self.match('TK_IDENTIFIER')
 				self.expression()
 			
-			#handles for loops
-			if self.cur_token[0] == 'TK_FOR':
-				self.match('TK_FOR')
-				self.expression()
-				#self.match('TK_TO')
-				#self.expression()
-				#print "pineapple"
-				#self.match('TK_DO')
-				#self.begin_statement()
 
 			if self.cur_token[0] =='TK_ASSIGNMENT':
 				print "MATCHED with current token: " + str(self.cur_token)
