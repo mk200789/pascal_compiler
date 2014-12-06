@@ -1,8 +1,9 @@
-#code for simulator will be placed here
+	#code for simulator will be placed here
 class Simulator(object):
-	def __init__(self, symtable, d_nodes):
+	def __init__(self, symtable, d_nodes, stack = []):
 		self.symtable = symtable
 		self.d_nodes = d_nodes
+		self.stack = stack
 
 
 	def simulate(self, d_nodes):
@@ -12,6 +13,9 @@ class Simulator(object):
 					print "pushi"
 				else:
 					print "push"
+
+	#def push(self):
+		#
 
 
 
