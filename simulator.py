@@ -13,9 +13,12 @@ class Simulator(object):
 					print "pushi"
 				else:
 					print "push"
+					#push value to stack
+					self.push(self.d_nodes['value'])
 
 	def push(self, value):
 		self.stack.append(value)
+		return
 
 
 
