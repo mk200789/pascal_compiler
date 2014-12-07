@@ -14,8 +14,8 @@ class Simulator(object):
 				else:
 					print "push"
 
-	#def push(self):
-		#
+	def push(self, value):
+		self.stack.append(value)
 
 
 
