@@ -192,6 +192,10 @@ class Parser(object):
 			if self.cur_token[0] == 'TK_REPEAT':
 				self.repeat_loop()
 
+			#<while statement> --> while <condition> do <statement>
+			if self.cur_token[0] == 'TK_WHILE':
+				self.while_loop()
+
 			#<write statement> --> write (<expression>)			
 			if self.cur_token[0] == 'TK_WRITELN':
 				self.write_statement()	
@@ -247,6 +251,12 @@ class Parser(object):
 		self.rel_operators()
 		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': self.ip })
 		self.ip +=1
+
+	def while_loop(self):
+		self.match('TK_WHILE')
+		self.expression()
+		self.rel_operators()
+		self.match('TK_DO')
 
 
 	#def if_statement(self):
