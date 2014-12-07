@@ -254,9 +254,19 @@ class Parser(object):
 
 	def while_loop(self):
 		self.match('TK_WHILE')
+		target = self.ip
 		self.expression()
 		self.rel_operators()
 		self.match('TK_DO')
+		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': target})
+		hole = self.ip
+		self.ip += 1
+		self.statements()
+		self.d_nodes.append({'instruction': 'jmp', 'ip':self.ip, 'value': target})
+		self.ip += 1
+		self.d_nodes[hole]['value'] = self.ip
+
+
 
 
 	#def if_statement(self):
