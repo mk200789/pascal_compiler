@@ -277,14 +277,17 @@ class Parser(object):
 		print "if statement"
 		self.match('TK_IF')
 		self.match('TK_OPEN_PARENTHESIS')
+		#ip hole for condition true
 		hole1 = self.ip
 		self.expression()
 		self.rel_operators()
 		self.cur_token
 		self.match('TK_CLOSE_PARENTHESIS')
-		print self.cur_token
 		self.match ('TK_THEN')
-		print "ha"
+		self.statements()
+		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': 0})
+		self.ip += 1
+		
 
 	def write_statement(self):
 		if self.cur_token[0] == 'TK_WRITELN':
