@@ -297,9 +297,9 @@ class Parser(object):
 			print "TK_ELSE MAN"
 			self.match('TK_ELSE')
 			hole2 = self.ip 
-			self.statements()
 			self.d_nodes.append({'instruction': 'jmp', 'ip': self.ip, 'value': 0})
 			self.ip += 1
+			self.statements()
 			self.d_nodes[hole1]['value'] = self.ip
 			self.d_nodes[hole2]['value'] = self.ip
 		
