@@ -22,6 +22,16 @@ class Simulator(object):
 			elif data['instruction'] == 'add':
 				#print "add " + str(data)
 				self.add()
+			elif data['instruction'] == 'minus':
+				self.minus()
+			elif data['instruction'] == 'mult':
+				self.mult()
+			elif data['instruction'] == 'less':
+				self.less()
+			elif data['instruction'] == 'mod':
+				self.mod()
+			elif data['instruction'] == 'halt':
+				self.halt()
 		print self.stack
 
 	def push(self, value):
@@ -50,22 +60,48 @@ class Simulator(object):
 	def add(self):
 		#print "add"
 		value1 = self.stack.pop()
-		print value1
 		value2 = self.stack.pop()
-		print value2
-		total = int(value1) + int(value2)
-		self.push(total)
+		t = int(value1) + int(value2)
+		self.push(t)
 		return
 
+	def minus(self):
+		value1 = self.stack.pop()
+		value2 = self.stack.pop()
+		t = int(value1) - int(value2)
+		self.push(t)
+		return
 
-	
+	def mult(self):
+		value1 = self.stack.pop()
+		value2 = self.stack.pop()
+		t = int(value1) * int(value2)
+		self.push(t)
+		return
 
+	def mod(self):
+		value1 = self.stack.pop()
+		value2 = self.stack.pop()
+		t = int(value1)%int(value2)
+		self.push(t)
+		return
+	def less(self):
+		value1 = self.stack.pop()
+		value2 = self.stack.pop()
+		t = int(value1) < int(value2)
+		self.push(t)
+		return
+
+	def halt(self):
+		print "END"
+	#def writeln(self):
+	#	value1 = self.stack.pop()
 
 
 if __name__ == '__main__':
 	#d_nodes = [{'ip': 0, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '100'}, {'ip': 1, 'instruction': 'pop', 'value': 'a'}, {'ip': 2, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'a'}, {'ip': 3, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '20'}, {'ip': 4, 'instruction': 'less', 'type': 'TK_LESS', 'value': 'less'}, {'ip': 5, 'instruction': 'jFalse', 'value': 11}, {'ip': 6, 'instruction': 'push', 'type': 'TK_STRING', 'value': "'hello'"}, {'ip': 7, 'instruction': 'writeln', 'type': 'TK_WRITELN', 'value': 'writeln'}, {'ip': 8, 'instruction': 'jmp', 'value': 11}, {'ip': 9, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'a'}, {'ip': 10, 'instruction': 'writeln', 'type': 'TK_WRITELN', 'value': 'writeln'}, {'ip': 11, 'instruction': 'ophalt', 'value': 'end.'}]
 	#symtable = [{'TYPE': 'integer', 'NAME': 'a', 'VALUE': 0, 'ADDRESS': 0}]
-	d_nodes = [{'ip': 0, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '2'}, {'ip': 1, 'instruction': 'pop', 'value': 'a'}, {'ip': 2, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '1'}, {'ip': 3, 'instruction': 'pop', 'value': 'b'}, {'ip': 4, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'a'}, {'ip': 5, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'b'}, {'ip': 6, 'instruction': 'add', 'type': 'TK_ADD', 'value': '+'}, {'ip': 7, 'instruction': 'pop', 'value': 'c'}, {'ip': 8, 'instruction': 'ophalt', 'value': 'end.'}]
+	d_nodes = [{'ip': 0, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '2'}, {'ip': 1, 'instruction': 'pop', 'value': 'a'}, {'ip': 2, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '1'}, {'ip': 3, 'instruction': 'pop', 'value': 'b'}, {'ip': 4, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'a'}, {'ip': 5, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'b'}, {'ip': 6, 'instruction': 'add', 'type': 'TK_ADD', 'value': '+'}, {'ip': 7, 'instruction': 'pop', 'value': 'c'}, {'ip': 8, 'instruction': 'halt', 'value': 'end.'}]
 	symtable = [{'TYPE': 'integer', 'NAME': 'a', 'VALUE': 0, 'ADDRESS': 0}, {'TYPE': 'integer', 'NAME': 'b', 'VALUE': 0, 'ADDRESS': 4}, {'TYPE': 'integer', 'NAME': 'c', 'VALUE': 0, 'ADDRESS': 8}]
 	s = Simulator(symtable, d_nodes)
 	s.simulate(d_nodes)
