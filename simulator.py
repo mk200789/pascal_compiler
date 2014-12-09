@@ -1,37 +1,37 @@
 	#code for simulator will be placed here
+import sys
+
 class Simulator(object):
-	def __init__(self, symtable, d_nodes, stack = []):
+	def __init__(self, symtable, d_nodes, stack = [], ip=0):
 		self.symtable = symtable
 		self.d_nodes = d_nodes
 		self.stack = stack
+		self.ip = ip
 
 
 	def simulate(self, d_nodes):
-		for data in d_nodes:
-			if data['instruction'] == 'push':
-				if data['type'] == 'TK_IDENTIFIER':
-					self.pushi(data['value'])
-					#print "pushi " + str(data)
+		while(1):
+			if self.d_nodes[self.ip]['instruction'] == 'push':
+				if self.d_nodes[self.ip]['type'] == 'TK_IDENTIFIER':
+					self.pushi(self.d_nodes[self.ip]['value'])
 				else:
-					#print "push " + str(data)
 					#push value to stack
-					self.push(data['value'])
-			elif data['instruction'] == 'pop':
-				#print "pop " + str(data)
-				self.pop(data['value'])
-			elif data['instruction'] == 'add':
-				#print "add " + str(data)
+					self.push(self.d_nodes[self.ip]['value'])
+			elif self.d_nodes[self.ip]['instruction'] == 'pop':
+				self.pop(self.d_nodes[self.ip]['value'])
+			elif self.d_nodes[self.ip]['instruction'] == 'add':
 				self.add()
-			elif data['instruction'] == 'minus':
+			elif self.d_nodes[self.ip]['instruction'] == 'minus':
 				self.minus()
-			elif data['instruction'] == 'mult':
+			elif self.d_nodes[self.ip]['instruction'] == 'mult':
 				self.mult()
-			elif data['instruction'] == 'less':
+			elif self.d_nodes[self.ip]['instruction'] == 'less':
 				self.less()
-			elif data['instruction'] == 'mod':
+			elif self.d_nodes[self.ip]['instruction'] == 'mod':
 				self.mod()
-			elif data['instruction'] == 'halt':
+			elif self.d_nodes[self.ip]['instruction'] == 'halt':
 				self.halt()
+			self.ip += 1
 		print self.stack
 
 	def push(self, value):
@@ -48,13 +48,13 @@ class Simulator(object):
 
 	def pop(self, value):
 		#print "pop"
-		print "before pop"+str(self.stack)
+		#print "before pop"+str(self.stack)
 		value1 = self.stack.pop()
 		for v in self.symtable:
 			if value == v['NAME']:
 				v['VALUE'] = value1
-				print v
-				print "pop"+str(self.stack)
+				#print v
+				#print "pop"+str(self.stack)
 		return
 
 	def add(self):
@@ -94,6 +94,7 @@ class Simulator(object):
 
 	def halt(self):
 		print "END"
+		sys.exit(0)
 	#def writeln(self):
 	#	value1 = self.stack.pop()
 
