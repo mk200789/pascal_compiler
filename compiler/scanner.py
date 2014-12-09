@@ -46,7 +46,7 @@ class Scanner(object):
                         self.cur_col = 0
                         self.cur_row += 1               
                 self.cur_col += 1
-        print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))                
+        print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))
         print self.tokens
 
     def build_string(self, a):
@@ -112,9 +112,9 @@ class Scanner(object):
     def build_state(self, a):
         #state machine to keep track of current state
         #space state
-        print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE"
-        print "+is there token: "+ str(self.cur_token)
-        if ord(a) <= 32:
+        print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE.    CURRENT TOKEN: "+ str(self.cur_token)
+        #print "+is there token: "+ str(self.cur_token)
+        if ord(a) <= 32:         
             if self.cur_token:
                 if self.to_upper(self.string_rec) in self.keyword:
                     #print "SPACE STATE: THERE IS A TOKEN - STRING IS IN KEYWORD LIST " #+str(self.string_rec)
@@ -127,6 +127,9 @@ class Scanner(object):
                     #print "SPACE STATE: THERE IS A TOKEN - STRING ISN'T IN KEYWORD LIST "#+str(self.string_rec)
                     self.tokens.append((self.keyword[self.cur_token], self.string_rec, self.cur_row, self.cur_col-1))
                     self.table.append({'TOKEN' : self.keyword[self.cur_token], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
+                    #if self.string_rec == 'x':
+                    #    print "SJJFJFJFJFJFJFJFS"
+                    #    print self.tokens
                     self.cur_token =''
                     self.string_rec = ''
                     return                    
@@ -161,15 +164,21 @@ class Scanner(object):
         if ord(a) == 59 and not self.numeric_mode:
             if not self.cur_token:
                 if self.string_rec:
-                    #if there's a string and yet has not been tokened, then its  a identifier
                     self.tokens.append((self.keyword['IDENTIFIER'], self.string_rec, self.cur_row, self.cur_col-1))
                     self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
             else:
-                self.tokens.append((self.keyword[self.to_upper(self.cur_token)], self.string_rec, self.cur_row, self.cur_col-1))
-                self.table.append({'TOKEN' : self.keyword[self.to_upper(self.cur_token)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
+                if self.to_upper(self.string_rec) == 'END':
+                    print "END;"
+                    self.string_rec +=a
+                    self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
+                    self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
+                else:
+                    self.tokens.append((self.keyword[self.to_upper(self.cur_token)], self.string_rec, self.cur_row, self.cur_col-1))
+                    self.table.append({'TOKEN' : self.keyword[self.to_upper(self.cur_token)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
             #print "INSIDE OF SEMICOLON"
-            self.tokens.append((self.keyword[a],a, self.cur_row, self.cur_col))
-            self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col})
+            if self.to_upper(self.string_rec) != 'END;':
+                self.tokens.append((self.keyword[a],a, self.cur_row, self.cur_col))
+                self.table.append({'TOKEN' : self.keyword[a], 'VALUE' : a, 'ROW' : self.cur_row, 'COL' : self.cur_col})
             self.string_rec = ''
             self.cur_token =''
             return
@@ -188,20 +197,25 @@ class Scanner(object):
 
         #equal
         if ord(a) == 61:
-            self.string_rec +=a
+            #self.string_rec +=a
             if not self.cur_token:
-                self.tokens.append((self.keyword[self.string_rec], self.string_rec, self.cur_row, self.cur_col))
-                self.table.append({'TOKEN' : self.keyword[self.string_rec], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col})
+                if self.string_rec != '':
+                    self.tokens.append((self.keyword['IDENTIFIER'], self.string_rec, self.cur_row, self.cur_col))
+                    self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col})
+                self.tokens.append((self.keyword['='], '=', self.cur_row, self.cur_col))
+                self.table.append({'TOKEN' : self.keyword['='], 'VALUE' : '=', 'ROW' : self.cur_row, 'COL' : self.cur_col})
                 self.string_rec = ''
+                #print self.tokens
                 return                
             if self.cur_token: #== 58:
             # := state
+                self.string_rec +=a
                 if self.string_rec in self.keyword:
                     self.tokens.append((self.keyword[self.string_rec], self.string_rec, self.cur_row, self.cur_col))
                     self.table.append({'TOKEN' : self.keyword[self.string_rec], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col})
                     self.string_rec = ''
                     self.cur_token =''
-                    return        
+                    return
 
         #plus / minus state
         if ord(a) == 43 or ord(a) == 45:
@@ -213,7 +227,7 @@ class Scanner(object):
         #open parenthesis
         if ord(a) == 40:
             if self.string_rec:
-                print "function" + str(self.string_rec)
+                #print "function" + str(self.string_rec)
                 #if there's string in record prior the opening paranthesis, then string must match keyword list
                 self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
                 self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
@@ -264,12 +278,13 @@ class Scanner(object):
 
         self.string_rec += a
 
-        if self.to_upper(self.string_rec) not in self.keyword:
-            self.cur_token = 'IDENTIFIER'
-            return
-        if self.to_upper(self.string_rec) in self.keyword:
-            self.cur_token = self.string_rec
-            return
+        if self.to_upper(self.string_rec) != 'END':
+            if self.to_upper(self.string_rec) not in self.keyword:
+                self.cur_token = 'IDENTIFIER'
+                return
+            if self.to_upper(self.string_rec) in self.keyword:
+                self.cur_token = self.string_rec
+                return
 
 
 
@@ -312,7 +327,7 @@ class Scanner(object):
         'IDENTIFIER': 'TK_IDENTIFIER',
         'BEGIN'     : 'TK_BEGIN',
         'END.'      : 'TK_END_DOT',
-        'END'       : 'TK_END',
+        'END;'      : 'TK_END',
         ','         : 'TK_COMMA',
         'IF'        : 'TK_IF',
         'THEN'      : 'TK_THEN',
@@ -320,6 +335,9 @@ class Scanner(object):
         'FOR'       : 'TK_FOR',
         'TO'        : 'TK_TO',
         'DO'        : 'TK_DO',
+        'REPEAT'    : 'TK_REPEAT',
+        'UNTIL'     : 'TK_UNTIL',
+        'WHILE'     : 'TK_WHILE',
         ';'         : 'TK_SEMICOLON',            
         ':'         : 'TK_COLON',
         '='         : 'TK_EQUAL',
