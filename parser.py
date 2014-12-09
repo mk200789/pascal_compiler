@@ -38,7 +38,7 @@ class Parser(object):
 		self.program()
 
 	def match(self, t):
-		print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
+		#print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
 		if (self.cur_token[0] == t):
 			#if match, generate code/ store to list
 			if (self.cur_token[1] == ')' or self.cur_token[1] == '('):
@@ -270,28 +270,23 @@ class Parser(object):
 		hole = self.ip
 		self.ip += 1
 		self.begin_statement()
-		#self.statements()
 		self.d_nodes.append({'instruction': 'jmp', 'ip':self.ip, 'value': target})
 		self.ip += 1
-		print "IPPATCH" + str(self.ip)
 		self.d_nodes[hole]['value'] = self.ip
 
 	def if_statement(self):
 		print "if statement"
 		self.match('TK_IF')
 		self.match('TK_OPEN_PARENTHESIS')
-		#ip hole for condition true
-		hole1 = self.ip
 		self.expression()
 		self.rel_operators()
-		self.cur_token
 		self.match('TK_CLOSE_PARENTHESIS')
 		self.match ('TK_THEN')
-		self.statements()
-		print "cur ip"+ str(self.ip)
+		#ip hole for condition true
+		hole1 = self.ip
 		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': 0})
 		self.ip += 1
-		print "BYEBYE"
+		self.statements()
 
 		if self.cur_token[0] == 'TK_ELSE':
 			print "TK_ELSE MAN"
@@ -416,6 +411,7 @@ class Parser(object):
 		elif t == 'TK_LESS':
 			self.d_nodes.append({'instruction': 'less', 'value': 'less', 'type': t, 'ip':self.ip})
 		elif t[0] == 'TK_IDENTIFIER':
+			print "{ instruction: 'push', value:  "+ str(self.cur_token[1])+", 'type': "+str(self.cur_token[0])+", ip: "+ str(self.ip)+"}"
 			self.d_nodes.append({'instruction': 'push','value':self.cur_token[1], 'type' :self.cur_token[0], 'ip':self.ip})
 		elif t[0] == 'TK_STRING':
 			self.d_nodes.append({'instruction': 'push', 'value':self.cur_token[1], 'type':self.cur_token[0], 'ip': self.ip})
