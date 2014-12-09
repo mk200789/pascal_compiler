@@ -46,8 +46,9 @@ class Scanner(object):
                         self.cur_col = 0
                         self.cur_row += 1               
                 self.cur_col += 1
-        print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))
-        print self.tokens
+        #print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))
+        #print self.tokens
+        return self.tokens
 
     def build_string(self, a):
         if ord(a) == 39:
@@ -112,7 +113,7 @@ class Scanner(object):
     def build_state(self, a):
         #state machine to keep track of current state
         #space state
-        print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE.    CURRENT TOKEN: "+ str(self.cur_token)
+        #print str(self.string_rec) + " : " +a + " FIRST PRINT IN BUILD_STATE.    CURRENT TOKEN: "+ str(self.cur_token)
         #print "+is there token: "+ str(self.cur_token)
         if ord(a) <= 32:         
             if self.cur_token:
@@ -360,16 +361,4 @@ class Scanner(object):
         'WRITELN'   : 'TK_WRITELN',
         'READLN'    : 'TK_READLN'
     }          
-          
-
-
-if __name__ == '__main__':
-    if len(sys.argv)!= 2:
-        exit(1)
-
-    #Open file
-    filename = sys.argv[1]
-
-    a = Scanner(1,1,False,'', False, False,[],'',[], False)
-    a.scan(filename)
     
