@@ -9,8 +9,9 @@ class Simulator(object):
 		self.ip = ip
 
 
-	def simulate(self, d_nodes):
+	def simulate(self):
 		while(1):
+			print str(self.ip) + ":  " + str(self.d_nodes[self.ip])
 			if self.d_nodes[self.ip]['instruction'] == 'push':
 				if self.d_nodes[self.ip]['type'] == 'TK_IDENTIFIER':
 					self.pushi(self.d_nodes[self.ip]['value'])
@@ -33,13 +34,24 @@ class Simulator(object):
 				self.halt()
 			elif self.d_nodes[self.ip]['instruction'] == 'jmp':
 				self.jmp(self.d_nodes[self.ip]['value'])
+			elif self.d_nodes[self.ip]['instruction'] == 'jFalse':
+				self.jFalse(self.d_nodes[self.ip]['value'])
+			elif self.d_nodes[self.ip]['instruction'] == 'writeln':
+				self.writeln()
 			self.ip += 1
+			print "stack["+str(self.ip)+"]: "+str(self.stack)
 		print self.stack
 
 
 	def jmp(self, value):
-		print self.stack
+		print 'jmp'
 		self.ip = value - 1
+
+	def jFalse(self, value):
+		print 'jFalse'
+		value1 = self.stack.pop()
+		if value1 == False:
+			self.ip = value - 1
 
 	def push(self, value):
 		#print "push"
@@ -89,6 +101,7 @@ class Simulator(object):
 		t = int(value1)%int(value2)
 		self.push(t)
 		return
+
 	def less(self):
 		value1 = self.stack.pop()
 		value2 = self.stack.pop()
@@ -99,16 +112,6 @@ class Simulator(object):
 	def halt(self):
 		print "END"
 		sys.exit(0)
-	#def writeln(self):
-	#	value1 = self.stack.pop()
-
-
-if __name__ == '__main__':
-	#if statement
-	d_nodes = [{'ip': 0, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '2'}, {'ip': 1, 'instruction': 'pop', 'value': 'a'}, {'ip': 2, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'a'}, {'ip': 3, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '20'}, {'ip': 4, 'instruction': 'less', 'type': 'TK_LESS', 'value': 'less'}, {'ip': 5, 'instruction': 'jFalse', 'value': 11}, {'ip': 6, 'instruction': 'push', 'type': 'TK_STRING', 'value': "'hello'"}, {'ip': 7, 'instruction': 'writeln', 'type': 'TK_WRITELN', 'value': 'writeln'}, {'ip': 8, 'instruction': 'jmp', 'value': 11}, {'ip': 9, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'a'}, {'ip': 10, 'instruction': 'writeln', 'type': 'TK_WRITELN', 'value': 'writeln'}, {'ip': 11, 'instruction': 'halt', 'value': 'end.'}]
-	symtable = [{'TYPE': 'integer', 'NAME': 'a', 'VALUE': 0, 'ADDRESS': 0}]
-	#add
-	#d_nodes = [{'ip': 0, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '2'}, {'ip': 1, 'instruction': 'pop', 'value': 'a'}, {'ip': 2, 'instruction': 'push', 'type': 'TK_INTEGER', 'value': '1'}, {'ip': 3, 'instruction': 'pop', 'value': 'b'}, {'ip': 4, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'a'}, {'ip': 5, 'instruction': 'push', 'type': 'TK_IDENTIFIER', 'value': 'b'}, {'ip': 6, 'instruction': 'add', 'type': 'TK_ADD', 'value': '+'}, {'ip': 7, 'instruction': 'pop', 'value': 'c'}, {'ip': 8, 'instruction': 'halt', 'value': 'end.'}]
-	#symtable = [{'TYPE': 'integer', 'NAME': 'a', 'VALUE': 0, 'ADDRESS': 0}, {'TYPE': 'integer', 'NAME': 'b', 'VALUE': 0, 'ADDRESS': 4}, {'TYPE': 'integer', 'NAME': 'c', 'VALUE': 0, 'ADDRESS': 8}]
-	s = Simulator(symtable, d_nodes)
-	s.simulate(d_nodes)
+	
+	def writeln(self):
+		value1 = self.stack.pop()
