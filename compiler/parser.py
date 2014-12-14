@@ -125,14 +125,14 @@ class Parser(object):
 			#print "MATCHED TK_ID_INTEGER current token :" + str(self.cur_token)
 			for v in self.sym_table:
 				if v['TYPE'] == 'none':
-					v['TYPE'] = 'integer'
+					v['TYPE'] = 'int'
 			self.match('TK_ID_INTEGER')
 
 		if self.cur_token[0] == 'TK_ID_STRING':
 			#print "MATCHED TK_ID_STRING current token :" + str(self.cur_token)
 			for v in self.sym_table:
 				if v['TYPE'] == 'none':
-					v['TYPE'] = 'string'
+					v['TYPE'] = 'str'
 			self.match('TK_ID_STRING')
 
 		if self.cur_token[0] == 'TK_SEMICOLON':
