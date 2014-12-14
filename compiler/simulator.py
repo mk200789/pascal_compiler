@@ -77,9 +77,17 @@ class Simulator(object):
 		#print "add"
 		value1 = self.stack.pop()
 		value2 = self.stack.pop()
-		t = int(value1) + int(value2)
-		self.push(t)
-		return
+		if (type(value1) == type(value2)):
+			print str(self.symtable) + "  HELOWORLD" 
+			for v in self.symtable:
+				if v['NAME'] == self.d_nodes[self.ip+1]['value']:
+					tempTotal = v['TYPE']
+				if v['VALUE'] == value1:
+					tempValue1 = v['TYPE']
+			if tempValue1 == tempTotal:
+				t = int(value1) + int(value2)
+				self.push(t)
+				return
 
 	def minus(self):
 		value1 = self.stack.pop()
@@ -111,6 +119,7 @@ class Simulator(object):
 
 	def halt(self):
 		print "END"
+		print self.symtable
 		sys.exit(0)
 	
 	def writeln(self):
