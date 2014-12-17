@@ -186,6 +186,10 @@ class Parser(object):
 				self.match('TK_IDENTIFIER')
 				self.expression()
 
+			#<for do statement> -- > for <initial condition> to <final value> do <begin statement>
+			#if self.cur_token[0] == 'TK_FOR':
+			#	self.for_do()
+
 			#<repeat statement> --> repeat <statement> until <condition>
 			if self.cur_token[0] == 'TK_REPEAT':
 				self.repeat_loop()
@@ -258,6 +262,9 @@ class Parser(object):
 			self.postfix('TK_GREATER_EQUAL')
 		else:
 			self.expression()
+
+	def for_do(self):
+		#function for for do loop
 
 	def repeat_loop(self):
 		self.match('TK_REPEAT')
