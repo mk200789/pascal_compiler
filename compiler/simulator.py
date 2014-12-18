@@ -11,7 +11,7 @@ class Simulator(object):
 
 	def simulate(self):
 		while(1):
-			print str(self.ip) + ":  " + str(self.d_nodes[self.ip])
+			print str(self.ip) + ":  [" + str(self.d_nodes[self.ip]['instruction']) + " : " +str(self.d_nodes[self.ip]['value']) + "]"
 			if self.d_nodes[self.ip]['instruction'] == 'push':
 				if self.d_nodes[self.ip]['type'] == 'TK_IDENTIFIER':
 					self.pushi(self.d_nodes[self.ip]['value'])
@@ -26,8 +26,14 @@ class Simulator(object):
 				self.minus()
 			elif self.d_nodes[self.ip]['instruction'] == 'mult':
 				self.mult()
+			elif self.d_nodes[self.ip]['instruction'] == 'div':
+				self.div()
 			elif self.d_nodes[self.ip]['instruction'] == 'less':
 				self.less()
+			elif self.d_nodes[self.ip]['instruction'] == 'greater':
+				self.greater()
+			elif self.d_nodes[self.ip]['instruction'] == 'equals':
+				self.equals()
 			elif self.d_nodes[self.ip]['instruction'] == 'mod':
 				self.mod()
 			elif self.d_nodes[self.ip]['instruction'] == 'halt':
@@ -36,22 +42,31 @@ class Simulator(object):
 				self.jmp(self.d_nodes[self.ip]['value'])
 			elif self.d_nodes[self.ip]['instruction'] == 'jFalse':
 				self.jFalse(self.d_nodes[self.ip]['value'])
+			elif self.d_nodes[self.ip]['instruction'] == 'jTrue':
+				self.jTrue(self.d_nodes[self.ip]['value'])
 			elif self.d_nodes[self.ip]['instruction'] == 'writeln':
 				self.writeln()
 			self.ip += 1
-			print "stack["+str(self.ip)+"]: "+str(self.stack)
+			print "stack: "+str(self.stack)
 		print self.stack
 
 
 	def jmp(self, value):
-		print 'jmp'
 		self.ip = value - 1
+		return
 
 	def jFalse(self, value):
-		print 'jFalse'
 		value1 = self.stack.pop()
+		print value1
 		if value1 == False:
 			self.ip = value - 1
+		return
+
+	def jTrue(self, value):
+		value1 = self.stack.pop()
+		if value1 == True:
+			self.ip = value -1
+		return
 
 	def push(self, value):
 		#print "push"
@@ -71,23 +86,24 @@ class Simulator(object):
 		for v in self.symtable:
 			if value == v['NAME']:
 				v['VALUE'] = value1
+		print self.symtable
 		return
 
 	def add(self):
 		#print "add"
 		value1 = self.stack.pop()
 		value2 = self.stack.pop()
-		if (type(value1) == type(value2)):
-			print str(self.symtable) + "  HELOWORLD" 
-			for v in self.symtable:
-				if v['NAME'] == self.d_nodes[self.ip+1]['value']:
-					tempTotal = v['TYPE']
-				if v['VALUE'] == value1:
-					tempValue1 = v['TYPE']
-			if tempValue1 == tempTotal:
-				t = int(value1) + int(value2)
-				self.push(t)
-				return
+		#if (type(value1) == type(value2)):
+		#	print str(self.symtable) + "  HELOWORLD" 
+		#	for v in self.symtable:
+		#		if v['NAME'] == self.d_nodes[self.ip+1]['value']:
+		#			tempTotal = v['TYPE']
+		#		if v['VALUE'] == value1:
+		#			tempValue1 = v['TYPE']
+		#	if tempValue1 == tempTotal:
+		t = int(value1) + int(value2)
+		self.push(t)
+		return
 
 	def minus(self):
 		value1 = self.stack.pop()
@@ -100,6 +116,13 @@ class Simulator(object):
 		value1 = self.stack.pop()
 		value2 = self.stack.pop()
 		t = int(value1) * int(value2)
+		self.push(t)
+		return
+
+	def div(self):
+		value1 = self.stack.pop()
+		value2 = self.stack.pop()
+		t = int(value1)/int(value2)
 		self.push(t)
 		return
 
@@ -117,10 +140,28 @@ class Simulator(object):
 		self.push(t)
 		return
 
+	def greater(self):
+		value1 = self.stack.pop()
+		value2 = self.stack.pop()
+		t = int(value1) > int(value2)
+		self.push(t)
+		return		
+
+	def equals(self):
+		value1 = self.stack.pop()
+		value2 = self.stack.pop()
+		t = (int(value1) == int(value2))
+		self.push(t)
+		return
+
 	def halt(self):
 		print "END"
-		print self.symtable
+		print "============================="
+		for s in self.symtable:
+			print s
+		print "============================="
 		sys.exit(0)
 	
 	def writeln(self):
 		value1 = self.stack.pop()
+		return
