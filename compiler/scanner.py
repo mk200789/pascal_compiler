@@ -317,6 +317,7 @@ class Scanner(object):
 
     keyword={
         'STRING'    : 'TK_ID_STRING',
+        'CHAR'      : 'TK_CHAR'
         'REAL'      : 'TK_REAL',
         'INTEGER'   : 'TK_ID_INTEGER',
         'BOOLEAN'   : 'TK_BOOLEAN',
@@ -336,6 +337,8 @@ class Scanner(object):
         'FOR'       : 'TK_FOR',
         'TO'        : 'TK_TO',
         'DO'        : 'TK_DO',
+        'CASE'      : 'TK_CASE'
+        'OF'        : 'TK_OF',
         'REPEAT'    : 'TK_REPEAT',
         'UNTIL'     : 'TK_UNTIL',
         'WHILE'     : 'TK_WHILE',
