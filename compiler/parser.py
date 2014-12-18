@@ -16,10 +16,10 @@ class Parser(object):
 
 	def parse(self):
 		self.retrieve()
-		#count = 1
-		#for row in self.d_nodes:
-		#	print str(count)+ " :  "+str(row)
-		#	count +=1
+		count = 1
+		for row in self.d_nodes:
+			print str(count)+ " :  "+str(row)
+			count +=1
 		return {'symtable': self.sym_table, 'd_nodes': self.d_nodes}
 
 	def setup_iterator(self):
@@ -71,8 +71,11 @@ class Parser(object):
 			self.match('TK_PROGRAM')
 			self.declarations()
 			self.begin_statement()
-			#if self.cur_token[0] == 'TK_END_DOT':
-			#	self.nodes.append(self.cur_token[1])
+			if self.cur_token[0] == 'TK_END':
+				self.match('TK_END')
+				if self.cur_token[0] == 'TK_END_DOT':
+					print "TK_END_DOT"
+					self.d_nodes.append({'instruction': 'halt', 'ip': self.ip, 'value': self.cur_token[1]})
 
 	###############################
 	#							  #
@@ -153,13 +156,14 @@ class Parser(object):
 		if self.cur_token[0] == 'TK_BEGIN':
 			#print "MATCHED TK_BEGIN current token :" + str(self.cur_token)
 			self.match('TK_BEGIN')
-		if self.cur_token[0] == 'TK_END_DOT':
-			if not self.temp:
-				self.d_nodes.append({'instruction': 'halt', 'ip': self.ip, 'value': self.cur_token[1]})
-				self.temp = True
-			return
-		else:
-			self.statements()
+		#if self.cur_token[0] == 'TK_END_DOT':
+		#	if not self.temp:
+		#		self.d_nodes.append({'instruction': 'halt', 'ip': self.ip, 'value': self.cur_token[1]})
+		#		self.temp = True
+		#	return
+		#else:
+		#	self.statements()
+		self.statements()
 
 
 	###############################
@@ -244,10 +248,6 @@ class Parser(object):
 			self.match('TK_EQUAL')
 			self.expression()
 			self.postfix('TK_EQUAL')
-		elif self.cur_token[0] == 'TK_LESS':
-			self.match('TK_LESS')
-			self.expression()
-			self.postfix('TK_LESS')
 		elif self.cur_token[0] == 'TK_GREATER':
 			self.match('TK_GREATER')
 			self.expression()
@@ -261,20 +261,30 @@ class Parser(object):
 			self.expression()
 			self.postfix('TK_GREATER_EQUAL')
 		else:
+			print self.cur_token
 			self.expression()
 
 	def for_do(self):
 		#function for for do loop
 		print "FOR_DO"
 		self.match('TK_FOR')
+		target = self.ip
 		for v in self.sym_table:
 			if self.cur_token[1] == v['NAME']:
 				loop_variable =  self.cur_token
 				break
-		print loop_variable
-		self.statements()
+		self.match('TK_IDENTIFIER')
+		self.match('TK_ASSIGNMENT')
+		self.postfix(self.cur_token)
+		self.d_nodes.append({'instruction': 'pop', 'value':loop_variable[1], 'ip': self.ip})
+		self.ip += 1
+		print self.d_nodes
+		self.match('TK_INTEGER')
 		self.match('TK_TO')
-		print "okay"
+		self.factor()
+		print self.d_nodes
+		self.match('TK_DO')
+		#print "okay"
 		#target = self.ip
 
 	def repeat_loop(self):
@@ -289,7 +299,8 @@ class Parser(object):
 	def while_loop(self):
 		self.match('TK_WHILE')
 		target = self.ip
-		self.expression()
+		#self.expression()
+		print "relation"
 		self.rel_operators()
 		self.match('TK_DO')
 		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': target})
@@ -394,12 +405,16 @@ class Parser(object):
 			self.match('TK_EQUAL')
 			self.postfix('TK_EQUAL')
 			self.term_prime()
+		elif self.cur_token[0] == 'TK_LESS':
+			self.match('TK_LESS')
+			self.expression()
+			self.postfix('TK_LESS')
 		else:
 			pass
 
 	# F --> id | lit | ( E ) | -F | +F | not F
 	def factor(self):
-		#print self.cur_token
+		print "factor: " +str(self.cur_token)
 		if self.cur_token[0] == 'TK_IDENTIFIER':
 			self.postfix(self.cur_token)
 			self.match('TK_IDENTIFIER')
