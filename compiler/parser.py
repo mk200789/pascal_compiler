@@ -36,7 +36,7 @@ class Parser(object):
 		self.program()
 
 	def match(self, t):
-		#print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
+		print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
 		if (self.cur_token[0] == t):
 			#if match, generate code/ store to list
 			if (self.cur_token[1] == ')' or self.cur_token[1] == '('):
@@ -187,8 +187,8 @@ class Parser(object):
 				self.expression()
 
 			#<for do statement> -- > for <initial condition> to <final value> do <begin statement>
-			#if self.cur_token[0] == 'TK_FOR':
-			#	self.for_do()
+			if self.cur_token[0] == 'TK_FOR':
+				self.for_do()
 
 			#<repeat statement> --> repeat <statement> until <condition>
 			if self.cur_token[0] == 'TK_REPEAT':
@@ -227,7 +227,7 @@ class Parser(object):
 					self.op = False
 				self.var_declaration()
 			
-			if self.cur_token[0] == 'TK_UNTIL':
+			if self.cur_token[0] == 'TK_UNTIL' or self.cur_token[0] == 'TK_TO':
 				return
 
 			if self.cur_token[0] == 'TK_ELSE':
@@ -265,6 +265,17 @@ class Parser(object):
 
 	def for_do(self):
 		#function for for do loop
+		print "FOR_DO"
+		self.match('TK_FOR')
+		for v in self.sym_table:
+			if self.cur_token[1] == v['NAME']:
+				loop_variable =  self.cur_token
+				break
+		print loop_variable
+		self.statements()
+		self.match('TK_TO')
+		print "okay"
+		#target = self.ip
 
 	def repeat_loop(self):
 		self.match('TK_REPEAT')
