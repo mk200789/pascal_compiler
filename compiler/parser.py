@@ -36,7 +36,7 @@ class Parser(object):
 		self.program()
 
 	def match(self, t):
-		print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
+		#print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
 		if (self.cur_token[0] == t):
 			#if match, generate code/ store to list
 			if (self.cur_token[1] == ')' or self.cur_token[1] == '('):
@@ -69,13 +69,16 @@ class Parser(object):
 		if self.cur_token[0] == 'TK_PROGRAM':
 			#print "MATCHED TK_PROGRAM"
 			self.match('TK_PROGRAM')
+			#self.match('TK_IDENTIFIER')
+			#self.match('TK_SEMICOLON')
 			self.declarations()
 			self.begin_statement()
 			if self.cur_token[0] == 'TK_END':
 				self.match('TK_END')
 				if self.cur_token[0] == 'TK_END_DOT':
-					print "TK_END_DOT"
 					self.d_nodes.append({'instruction': 'halt', 'ip': self.ip, 'value': self.cur_token[1]})
+			else:
+				self.d_nodes.append({'instruction': 'halt', 'ip': self.ip, 'value': self.cur_token[1]})
 
 	###############################
 	#							  #
@@ -261,46 +264,67 @@ class Parser(object):
 			self.expression()
 			self.postfix('TK_GREATER_EQUAL')
 		else:
-			print self.cur_token
 			self.expression()
 
 	def for_do(self):
 		#function for for do loop
-		print "FOR_DO"
 		self.match('TK_FOR')
-		target = self.ip
 		for v in self.sym_table:
 			if self.cur_token[1] == v['NAME']:
 				loop_variable =  self.cur_token
 				break
 		self.match('TK_IDENTIFIER')
 		self.match('TK_ASSIGNMENT')
-		self.postfix(self.cur_token)
-		self.d_nodes.append({'instruction': 'pop', 'value':loop_variable[1], 'ip': self.ip})
+		#self.postfix(self.cur_token)
+		self.d_nodes.append({'instruction': 'push', 'value': self.cur_token[1], 'type': self.cur_token[0], 'ip': self.ip})
+		self.ip += 1		
+		self.d_nodes.append({'instruction': 'pop', 'value':loop_variable[1], 'type': loop_variable[0], 'ip': self.ip})
+		#print "instruction: push, value: "+str(loop_variable[1])+"  IP: "+str(self.ip)
 		self.ip += 1
-		print self.d_nodes
+		target = self.ip
+		self.d_nodes.append({'instruction': 'push', 'value':loop_variable[1], 'type': loop_variable[0], 'ip': self.ip})
+		self.ip += 1
+		#self.match('TK_IDENTIFIER')
 		self.match('TK_INTEGER')
 		self.match('TK_TO')
-		self.factor()
-		print self.d_nodes
+		self.d_nodes.append({'instruction': 'push', 'value':self.cur_token[1], 'type': self.cur_token[0], 'ip': self.ip})
+		self.ip += 1
+		self.match('TK_INTEGER')
 		self.match('TK_DO')
+		self.d_nodes.append({'instruction': 'greater', 'value':'greater','type': loop_variable[0], 'ip':self.ip})
+		self.ip += 1
+		hole = self.ip
+		self.d_nodes.append({'instruction': 'jTrue', 'value':self.ip, 'ip':hole})
+		self.ip +=1
+		self.match('TK_BEGIN')
+		self.statements()
 		#print "okay"
 		#target = self.ip
+		self.d_nodes.append({'instruction': 'push','value': loop_variable[1], 'type' :loop_variable[0], 'ip':self.ip})
+		self.ip += 1
+		self.d_nodes.append({'instruction': 'push','value': 1, 'type': 'TK_INTEGER', 'ip':self.ip})
+		self.ip += 1
+		self.d_nodes.append({'instruction': 'add','value':'+', 'ip': self.ip})
+		self.ip += 1
+		self.d_nodes.append({'instruction': 'pop', 'value': loop_variable[1], 'type': loop_variable[0], 'ip':self.ip})
+		self.ip += 1
+		self.d_nodes.append({'instruction': 'jmp', 'value': target, 'ip': self.ip})
+		self.ip += 1
+		self.d_nodes[hole]['value'] = self.ip
 
 	def repeat_loop(self):
+		target = self.ip
 		self.match('TK_REPEAT')
 		self.statements()
 		self.match('TK_UNTIL')
 		self.expression()
 		self.rel_operators()
-		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': self.ip })
+		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': target })
 		self.ip +=1
 
 	def while_loop(self):
 		self.match('TK_WHILE')
-		target = self.ip
-		#self.expression()
-		print "relation"
+		target = self.ip	
 		self.rel_operators()
 		self.match('TK_DO')
 		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': target})
@@ -322,7 +346,7 @@ class Parser(object):
 		#ip hole for condition true
 		#print self.ip
 		hole1 = self.ip
-		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': 0})
+		self.d_nodes.append({'instruction': 'jFalse', 'ip': self.ip, 'value': self.ip})
 		self.ip += 1
 		self.statements()
 
@@ -333,10 +357,11 @@ class Parser(object):
 			hole2 = self.ip 
 			self.d_nodes.append({'instruction': 'jmp', 'ip': self.ip, 'value': 0})
 			self.ip += 1
-			self.statements()
 			#print self.ip
 			self.d_nodes[hole1]['value'] = self.ip
+			self.statements()
 			self.d_nodes[hole2]['value'] = self.ip
+
 		
 
 	def write_statement(self):
@@ -403,8 +428,8 @@ class Parser(object):
 			self.term_prime()
 		elif self.cur_token[0] == 'TK_EQUAL':
 			self.match('TK_EQUAL')
+			self.expression()
 			self.postfix('TK_EQUAL')
-			self.term_prime()
 		elif self.cur_token[0] == 'TK_LESS':
 			self.match('TK_LESS')
 			self.expression()
@@ -414,7 +439,7 @@ class Parser(object):
 
 	# F --> id | lit | ( E ) | -F | +F | not F
 	def factor(self):
-		print "factor: " +str(self.cur_token)
+		#print "factor: " +str(self.cur_token)
 		if self.cur_token[0] == 'TK_IDENTIFIER':
 			self.postfix(self.cur_token)
 			self.match('TK_IDENTIFIER')
@@ -451,7 +476,7 @@ class Parser(object):
 		elif t == 'TK_MOD':
 			self.d_nodes.append({'instruction': 'mod','value':'mod', 'type' :t, 'ip':self.ip})
 		elif t == 'TK_EQUAL':
-			self.d_nodes.append({'instruction': 'pop', 'value':'equals', 'type': t, 'ip':self.ip})
+			self.d_nodes.append({'instruction': 'equals', 'value':'equals', 'type': t, 'ip':self.ip})
 		elif t == 'TK_LESS':
 			self.d_nodes.append({'instruction': 'less', 'value': 'less', 'type': t, 'ip':self.ip})
 		elif t == 'TK_GREATER':
