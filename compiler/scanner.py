@@ -46,7 +46,7 @@ class Scanner(object):
                         self.cur_col = 0
                         self.cur_row += 1               
                 self.cur_col += 1
-        #print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))
+        print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))
         #print self.tokens
         return self.tokens
 
@@ -169,7 +169,7 @@ class Scanner(object):
                     self.table.append({'TOKEN' : self.keyword['IDENTIFIER'], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
             else:
                 if self.to_upper(self.string_rec) == 'END':
-                    print "END;"
+                    #print "END;"
                     self.string_rec +=a
                     self.tokens.append((self.keyword[self.to_upper(self.string_rec)], self.string_rec, self.cur_row, self.cur_col-1))
                     self.table.append({'TOKEN' : self.keyword[self.to_upper(self.string_rec)], 'VALUE' : self.string_rec, 'ROW' : self.cur_row, 'COL' : self.cur_col-1})
