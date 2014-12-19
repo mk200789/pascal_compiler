@@ -14,7 +14,7 @@ class Parser(object):
 
 		self.temp = False
 		self.isSwitch = False
-		self.switchHole = ''
+		self.switchHole = 0
 
 	def parse(self):
 		self.retrieve()
@@ -302,16 +302,20 @@ class Parser(object):
 			print str(target) + "  " + str(self.cur_token)
 			#self.d_nodes.append({'instruction': 'pop', 'value': self.cur_token[1], 'type': self.cur_token[0], 'ip': self.ip})
 			#self.ip += 1
-			self.parse_label(target)	
+			self.switchHole = self.ip
+			print "switchhole "+ str(self.switchHole)
+			self.parse_label(target)
 			if self.cur_token[0] == 'TK_END':
 				self.match('TK_END')
 				break
 		
 		for v in self.d_nodes:
-			if v['instruction'] == 'jTrue':
-				v['value'] = self.ip
+			if v['instruction'] == 'jmp':
+				if v['value'] == 0:
+					v['value'] = self.ip
 
 	def parse_label(self, target):
+		print "self.ip" + str(self.ip)
 		if self.cur_token[0] == 'TK_STRING':		
 			#self.match('TK_STRING')
 			if not self.temp:
@@ -322,18 +326,26 @@ class Parser(object):
 				self.d_nodes.append({'instruction':'push', 'value':target[1], 'type': target[0], 'ip': self.ip})
 				self.ip += 1				
 				self.d_nodes.append({'instruction':'push', 'value':self.cur_token[1], 'type': self.cur_token[0], 'ip': self.ip})
-				self.ip += 1			
+				self.ip += 1		
 			self.d_nodes.append({'instruction': 'equals', 'value':'equals', 'type': self.cur_token[0], 'ip': self.ip}) ##
 			self.ip += 1
-			self.d_nodes.append({'instruction': 'jTrue', 'value': self.ip+1, 'ip': self.ip})
+			#self.d_nodes.append({'instruction': 'jTrue', 'value': self.ip+1, 'ip': self.ip})
+			#self.ip +=1
+			self.d_nodes.append({'instruction': 'jTrue', 'value': self.ip+2, 'ip': self.ip})
 			self.ip +=1
+			self.d_nodes.append({'instruction': 'jmp', 'value': self.ip+4, 'ip': self.ip})
+			self.ip +=1							
 			self.match('TK_STRING')			
 			#print "cur_token " + str(self.cur_token)
 		elif self.cur_token[0] == 'TK_COMMA':
 			self.match('TK_COMMA')
 		elif self.cur_token[0] == 'TK_COLON':
-			self.match('TK_COLON')			
+			self.match('TK_COLON')
 			self.statements()
+			self.d_nodes.append({'instruction': 'jmp', 'value': 0, 'ip': self.ip})
+			self.ip +=1
+		#self.d_nodes[hole1]['instruction'] = self.ip
+		
 
 
 
