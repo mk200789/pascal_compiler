@@ -1,5 +1,4 @@
 import sys
-from prettytable import PrettyTable
 
 class Scanner(object):
     def __init__(self, cur_row, cur_col, string_mode, string_rec, numeric_mode, real_mode, tokens, cur_token, table, comment_mode):
@@ -23,8 +22,6 @@ class Scanner(object):
         for line in output:
             #print "current row scanned:" +str(self.cur_row)#+ ":" +line
             for a in line:
-            #if a double quotation is seen
-                #print "currrent column scanned:"+str(self.cur_col)+" : " + a
                 if self.comment_mode:
                     self.build_comment(a)
                     if ord(a) == 10:
@@ -46,9 +43,19 @@ class Scanner(object):
                         self.cur_col = 0
                         self.cur_row += 1               
                 self.cur_col += 1
-        print(self.print_table(1, ['NUMBER', 'TOKEN', 'COLUMN', 'VALUE', 'ROW'], [], self.table ))
-        #print self.tokens
+        self.printer()
         return self.tokens
+
+    def printer(self):
+        print "---------------------------------------------------------------------------------------------------------"
+        print "TOKENS"
+        print "---------------------------------------------------------------------------------------------------------"
+        print "%0s %30s %20s %20s %20s %10s" %('|','TOKEN|', 'VALUE|', 'ROW|', 'COLUMN', '|')
+        print "---------------------------------------------------------------------------------------------------------"
+        for n in self.tokens:
+            print "%0s %30s %20s %20s %20s %10s" %('|', str(n[0])+"|", str(n[1])+"|", str(n[2])+"|", n[3], '|')
+        print "---------------------------------------------------------------------------------------------------------"        
+        return
 
     def build_string(self, a):
         if ord(a) == 39:
@@ -292,26 +299,7 @@ class Scanner(object):
     def to_upper(self, a):
         #returns lowercase strings
         return a.upper()
-
-    #for debugging purpose
-    def print_table(self, i, names, row, data):
-        table = PrettyTable(names)
-        #print names
-        for datum in data:
-            row.append(i)
-            for k, v in datum.items():
-                if str(k) == 'TOKEN':
-                    row.append(v)
-                if str(k) == 'VALUE':                    
-                    row.append(v)
-                if str(k) == 'ROW':
-                    row.append(v)                    
-                if str(k) == 'COL':
-                    row.append(v)
-            table.add_row(row)
-            del row[:]
-            i += 1
-        return table        
+    
 
 ##write funcion take in table name and keyname and return value
 
