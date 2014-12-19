@@ -30,6 +30,15 @@ class Parser(object):
 		for n in self.d_nodes:
 			print "%0s %5s %15s %10s %0s" %('|', str(n['ip'])+"|", str(n['instruction'])+"|", str(n['value']),'|')
 		print "------------------------------------"
+
+		print "-------------------------------------------"
+		print "SYMBOL TABLE"
+		print "-------------------------------------------"
+		print "%0s %8s %8s %10s %10s %0s" %('|','TOKEN|', 'VALUE|', 'TYPE|', 'ADDRESS', '|')
+		print "-------------------------------------------"
+		for n in self.sym_table:
+			print "%0s %8s %8s %10s %10s %0s" %('|', str(n['NAME'])+"|", str(n['VALUE'])+"|", str(n['TYPE'])+"|", n['ADDRESS'], '|')
+		print "-------------------------------------------"		
 		return
 
 	def setup_iterator(self):
