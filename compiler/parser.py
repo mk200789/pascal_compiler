@@ -18,11 +18,19 @@ class Parser(object):
 
 	def parse(self):
 		self.retrieve()
-		count = 1
-		for row in self.d_nodes:
-			print str(count)+ " :  "+str(row)
-			count +=1
+		self.printer()
 		return {'symtable': self.sym_table, 'd_nodes': self.d_nodes}
+
+	def printer(self):
+		print "------------------------------------"
+		print "INSTRUCTIONS"
+		print "------------------------------------"
+		print "%0s %5s %15s %10s %0s" %('|','IP|', 'INSTRUCTION|', 'VALUE','|')
+		print "------------------------------------"
+		for n in self.d_nodes:
+			print "%0s %5s %15s %10s %0s" %('|', str(n['ip'])+"|", str(n['instruction'])+"|", str(n['value']),'|')
+		print "------------------------------------"
+		return
 
 	def setup_iterator(self):
 		tokens = iter(self.alist)
@@ -38,7 +46,7 @@ class Parser(object):
 		self.program()
 
 	def match(self, t):
-		print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
+		#print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
 		if (self.cur_token[0] == t):
 			#if match, generate code/ store to list
 			if (self.cur_token[1] == ')' or self.cur_token[1] == '('):
@@ -168,13 +176,6 @@ class Parser(object):
 		if self.cur_token[0] == 'TK_BEGIN':
 			#print "MATCHED TK_BEGIN current token :" + str(self.cur_token)
 			self.match('TK_BEGIN')
-		#if self.cur_token[0] == 'TK_END_DOT':
-		#	if not self.temp:
-		#		self.d_nodes.append({'instruction': 'halt', 'ip': self.ip, 'value': self.cur_token[1]})
-		#		self.temp = True
-		#	return
-		#else:
-		#	self.statements()
 		self.statements()
 
 
