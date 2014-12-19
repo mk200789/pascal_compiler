@@ -13,6 +13,8 @@ class Parser(object):
 		self.op = False
 
 		self.temp = False
+		self.isSwitch = False
+		self.switchHole = ''
 
 	def parse(self):
 		self.retrieve()
@@ -243,7 +245,10 @@ class Parser(object):
 					self.d_nodes.append({'instruction': 'pop', 'value':self.lhs[1], 'ip': self.ip})
 					self.ip += 1
 					self.op = False
-				self.var_declaration()
+				if self.isSwitch:
+					break
+				else:
+					self.var_declaration()
 			
 			if self.cur_token[0] == 'TK_UNTIL' or self.cur_token[0] == 'TK_TO':
 				return
@@ -278,16 +283,58 @@ class Parser(object):
 			self.expression()
 
 	def switchcase(self):
+		self.isSwitch = True
 		self.match('TK_CASE')
 		self.match('TK_OPEN_PARENTHESIS')
+		target = self.cur_token
 		self.expression()
 		self.match('TK_CLOSE_PARENTHESIS')
-		self.match('TK_OF')
-		self.parse_case() #parsing case labels
-		#self.match('TK_END')
+		self.match('TK_OF')	
+		self.parse_case(target) #parsing case labels
+		#self.d_nodes.append({'instruction': 'jmp', 'value': self.ip, 'ip': self.ip})
+		#self.ip += 1
+		self.statements()
 
-	def parse_case(self):
+	def parse_case(self, target):
+		#print self.cur_token
 		print "parse_case"
+		while(1):
+			print str(target) + "  " + str(self.cur_token)
+			#self.d_nodes.append({'instruction': 'pop', 'value': self.cur_token[1], 'type': self.cur_token[0], 'ip': self.ip})
+			#self.ip += 1
+			self.parse_label(target)	
+			if self.cur_token[0] == 'TK_END':
+				self.match('TK_END')
+				break
+		
+		for v in self.d_nodes:
+			if v['instruction'] == 'jTrue':
+				v['value'] = self.ip
+
+	def parse_label(self, target):
+		if self.cur_token[0] == 'TK_STRING':		
+			#self.match('TK_STRING')
+			if not self.temp:
+				self.d_nodes.append({'instruction':'push', 'value':self.cur_token[1], 'type': self.cur_token[0], 'ip': self.ip})
+				self.ip += 1
+				self.temp = True
+			else:
+				self.d_nodes.append({'instruction':'push', 'value':target[1], 'type': target[0], 'ip': self.ip})
+				self.ip += 1				
+				self.d_nodes.append({'instruction':'push', 'value':self.cur_token[1], 'type': self.cur_token[0], 'ip': self.ip})
+				self.ip += 1			
+			self.d_nodes.append({'instruction': 'equals', 'value':'equals', 'type': self.cur_token[0], 'ip': self.ip}) ##
+			self.ip += 1
+			self.d_nodes.append({'instruction': 'jTrue', 'value': self.ip+1, 'ip': self.ip})
+			self.ip +=1
+			self.match('TK_STRING')			
+			#print "cur_token " + str(self.cur_token)
+		elif self.cur_token[0] == 'TK_COMMA':
+			self.match('TK_COMMA')
+		elif self.cur_token[0] == 'TK_COLON':
+			self.match('TK_COLON')			
+			self.statements()
+
 
 
 	def for_do(self):
