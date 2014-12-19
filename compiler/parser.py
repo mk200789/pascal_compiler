@@ -36,7 +36,7 @@ class Parser(object):
 		self.program()
 
 	def match(self, t):
-		#print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
+		print "MATCH FUNCTION: "+ str(self.cur_token) + ":" +str(t)
 		if (self.cur_token[0] == t):
 			#if match, generate code/ store to list
 			if (self.cur_token[1] == ')' or self.cur_token[1] == '('):
@@ -127,6 +127,7 @@ class Parser(object):
 				self.match('TK_COLON')
 				break
 
+
 		if self.cur_token[0] == 'TK_ID_INTEGER':
 			#print "MATCHED TK_ID_INTEGER current token :" + str(self.cur_token)
 			for v in self.sym_table:
@@ -140,6 +141,12 @@ class Parser(object):
 				if v['TYPE'] == 'none':
 					v['TYPE'] = 'str'
 			self.match('TK_ID_STRING')
+
+		if self.cur_token[0] == 'TK_ID_CHAR':
+			for v in self.sym_table:
+				if v['TYPE'] == 'none':
+					v['TYPE'] = 'char'
+			self.match('TK_ID_CHAR')
 
 		if self.cur_token[0] == 'TK_SEMICOLON':
 			#print "MATCHED TK_SEMICOLON current token :" + str(self.cur_token)
@@ -196,6 +203,10 @@ class Parser(object):
 			#<for do statement> -- > for <initial condition> to <final value> do <begin statement>
 			if self.cur_token[0] == 'TK_FOR':
 				self.for_do()
+
+			#switch case
+			if self.cur_token[0] == 'TK_CASE':
+				self.switchcase()
 
 			#<repeat statement> --> repeat <statement> until <condition>
 			if self.cur_token[0] == 'TK_REPEAT':
@@ -265,6 +276,19 @@ class Parser(object):
 			self.postfix('TK_GREATER_EQUAL')
 		else:
 			self.expression()
+
+	def switchcase(self):
+		self.match('TK_CASE')
+		self.match('TK_OPEN_PARENTHESIS')
+		self.expression()
+		self.match('TK_CLOSE_PARENTHESIS')
+		self.match('TK_OF')
+		self.parse_case() #parsing case labels
+		#self.match('TK_END')
+
+	def parse_case(self):
+		print "parse_case"
+
 
 	def for_do(self):
 		#function for for do loop
