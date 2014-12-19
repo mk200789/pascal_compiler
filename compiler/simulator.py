@@ -60,14 +60,18 @@ class Simulator(object):
 		value1 = self.stack.pop()
 		print value1
 		if value1 == False:
+			"print False"
 			self.ip = value - 1
+		print self.ip
 		return
 
 	def jTrue(self, value):
 		value1 = self.stack.pop()
+		print "jTrue"
 		if value1 == True:
+			print "true"
 			self.ip = value -1
-			print self.ip
+		print self.ip
 		return
 
 	def push(self, value):
@@ -162,11 +166,17 @@ class Simulator(object):
 
 	def halt(self):
 		print "END"
-		print "============================="
-		for s in self.symtable:
-			print s
-		print "============================="
+		self.printer()
 		sys.exit(0)
+
+	def printer(self):
+		print "-------------------------------------------"
+		print "%0s %8s %8s %10s %10s %0s" %('|','TOKEN|', 'VALUE|', 'TYPE|', 'ADDRESS', '|')
+		print "-------------------------------------------"
+		for n in self.symtable:
+			print "%0s %8s %8s %10s %10s %0s" %('|', str(n['NAME'])+"|", str(n['VALUE'])+"|", str(n['TYPE'])+"|", n['ADDRESS'], '|')
+		print "-------------------------------------------"
+		return
 	
 	def writeln(self):
 		value1 = self.stack.pop()
