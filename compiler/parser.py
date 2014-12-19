@@ -339,6 +339,9 @@ class Parser(object):
 			#print "cur_token " + str(self.cur_token)
 		elif self.cur_token[0] == 'TK_COMMA':
 			self.match('TK_COMMA')
+			self.d_nodes[self.ip-1]['value'] =self.ip
+			#self.d_nodes.append({'instruction': 'pop', 'value': self.ip+4, 'ip': self.ip})
+			#self.ip +=1				
 		elif self.cur_token[0] == 'TK_COLON':
 			self.match('TK_COLON')
 			self.statements()
