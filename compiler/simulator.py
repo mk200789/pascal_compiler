@@ -45,6 +45,7 @@ class Simulator(object):
 			elif self.d_nodes[self.ip]['instruction'] == 'jTrue':
 				self.jTrue(self.d_nodes[self.ip]['value'])
 			elif self.d_nodes[self.ip]['instruction'] == 'writeln':
+				print self.d_nodes[self.ip+1]
 				self.writeln()
 			self.ip += 1
 			print "stack: "+str(self.stack)
@@ -66,6 +67,7 @@ class Simulator(object):
 		value1 = self.stack.pop()
 		if value1 == True:
 			self.ip = value -1
+			print self.ip
 		return
 
 	def push(self, value):
@@ -150,7 +152,11 @@ class Simulator(object):
 	def equals(self):
 		value1 = self.stack.pop()
 		value2 = self.stack.pop()
-		t = (int(value1) == int(value2))
+		print type(value1)
+		if type(value1) is int:
+			t = (int(value1) == int(value2))
+		if type(value1) is str:
+			t = value1 == value2
 		self.push(t)
 		return
 
