@@ -5,5 +5,5 @@ begin
    repeat
       writeln(a);
       a := a + 1;
-   until a = 20;
+   until a = 14;
 end.
