@@ -1,8 +1,10 @@
 program forLoop;
 var a, b: integer;
 begin
-   for a := 10  to 13 do
-   begin
-      writeln(a);
-   end;
+	b := 0;
+	for a := 10  to 13 do
+	begin
+		b := b + a;
+		writeln(a);
+	end;
 end.
