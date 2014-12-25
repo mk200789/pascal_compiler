@@ -1,7 +1,9 @@
 program ifChecking;
 var a: integer;
 begin
-	a := 100;
+	a := 2;
 	if ( a < 20) then
-		writeln('hello')
+		a := 4;
+	else
+		writeln('a');
 end.
