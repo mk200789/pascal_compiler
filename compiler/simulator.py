@@ -58,29 +58,21 @@ class Simulator(object):
 
 	def jFalse(self, value):
 		value1 = self.stack.pop()
-		print value1
 		if value1 == False:
-			"print False"
 			self.ip = value - 1
-		print self.ip
 		return
 
 	def jTrue(self, value):
 		value1 = self.stack.pop()
-		print "jTrue"
 		if value1 == True:
-			print "true"
 			self.ip = value -1
-		print self.ip
 		return
 
 	def push(self, value):
-		#print "push"
 		self.stack.insert(0,value)
 		return
 
 	def pushi(self, value):
-		#print "pushi"
 		for v in self.symtable:
 			if value == v['NAME']:
 				self.stack.insert(0,v['VALUE'])
